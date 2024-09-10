@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+from sistema_escolar.controllers import AlunoRouter, MateriaRouter
 
-@app.get("/")
-def hello_world():
-    return {"message": "hello world"}
+
+app = FastAPI(title="Sistema Escolar")
+app.include_router(AlunoRouter)
+app.include_router(MateriaRouter)
 
