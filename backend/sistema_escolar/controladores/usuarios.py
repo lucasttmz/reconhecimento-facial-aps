@@ -1,59 +1,59 @@
 from fastapi import APIRouter
 
-from sistema_escolar.modelos import TipoUsuario
+from sistema_escolar.modelos.usuario import TipoUsuario, UsuarioSchema
 
 router = APIRouter(tags=["usuarios"])
 
 
-@router.get("/alunos")
+@router.get("/alunos", response_model=list[UsuarioSchema])
 def listar_todos_alunos():
     """Lista todos os alunos"""
     return [
         {
-            "matricula": "123",
+            "codigo": "AL_LUC4S",
             "nome": "lucas",
             "tipo": TipoUsuario.ALUNO,
         },
         {
-            "matricula": "321",
+            "codigo": "AL_F3L1P3",
             "nome": "felipe",
             "tipo": TipoUsuario.ALUNO,
         },
     ]
 
 
-@router.get("/alunos/{id_aluno")
+@router.get("/alunos/{id_aluno", response_model=UsuarioSchema)
 def pesquisar_aluno(id_aluno: int):
     """Exibe as informações de um aluno em específico"""
     return {
-        "matricula": f"matricula do {id_aluno}",
+        "codigo": f"codigo do {id_aluno}",
         "nome": f"nome do {id_aluno}",
-        "tipo": (id_aluno % 3) or 3,
+        "tipo": TipoUsuario.ALUNO,
     }
 
 
-@router.get("/professores")
+@router.get("/professores", response_model=list[UsuarioSchema])
 def listar_todos_professores():
-    """Lista todos os alunos"""
+    """Lista todos os professores"""
     return [
         {
-            "matricula": "123",
-            "nome": "joao",
+            "codigo": "PF_M4R14",
+            "nome": "Maria",
             "tipo": TipoUsuario.PROFESSOR,
         },
         {
-            "matricula": "321",
-            "nome": "maria",
+            "codigo": "PF_J040",
+            "nome": "João",
             "tipo": TipoUsuario.PROFESSOR,
         },
     ]
 
 
-@router.get("/professores/{id_professor}")
+@router.get("/professores/{id_professor}", response_model=UsuarioSchema)
 def pesquisar_professor(id_professor: int):
     """Exibe as informações de um professor em específico"""
     return {
-        "matricula": f"matricula do {id_professor}",
+        "codigo": f"codigo do {id_professor}",
         "nome": f"nome do {id_professor}",
         "tipo": TipoUsuario.PROFESSOR,
     }

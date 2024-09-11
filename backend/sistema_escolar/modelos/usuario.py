@@ -1,4 +1,3 @@
-from datetime import date
 from enum import IntEnum
 
 from pydantic import BaseModel
@@ -12,19 +11,12 @@ class TipoUsuario(IntEnum):
 
 class Usuario(BaseModel):
     id_usuario: int
-    matricula: str
+    codigo: str
     nome: str
     tipo: TipoUsuario
 
 
 class UsuarioSchema(BaseModel):
-    matricula: str
+    codigo: str
     nome: str
     tipo: TipoUsuario
-
-
-class MateriaSchema(BaseModel):
-    nome: str
-    professor: str
-    data_inicio: date
-    data_fim: date
