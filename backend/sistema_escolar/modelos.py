@@ -12,7 +12,6 @@ class TipoUsuario(IntEnum):
 
 class Usuario(BaseModel):
     id_usuario: int
-    id_lbph: int
     matricula: str
     nome: str
     tipo: TipoUsuario
@@ -29,4 +28,3 @@ class MateriaSchema(BaseModel):
     professor: str
     data_inicio: date
     data_fim: date
-
