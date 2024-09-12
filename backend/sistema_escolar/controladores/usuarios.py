@@ -1,59 +1,25 @@
-from fastapi import APIRouter
-
 from sistema_escolar.modelos.usuario import TipoUsuario, UsuarioSchema
 
-router = APIRouter(tags=["usuarios"])
 
+class UsuarioControle():
+    def listar_todos_alunos(self) -> list[UsuarioSchema]:
+        alunos = [
+            {"codigo": "AL_LUC4S", "nome": "Lucas", "tipo": TipoUsuario.ALUNO},
+            {"codigo": "AL_F3L1P3", "nome": "Felipe", "tipo": TipoUsuario.ALUNO},
+            {"codigo": "AL_S4MU3L", "nome": "Samuel", "tipo": TipoUsuario.ALUNO},
+        ]
+        return [UsuarioSchema(**aluno) for aluno in alunos]
 
-@router.get("/alunos", response_model=list[UsuarioSchema])
-def listar_todos_alunos():
-    """Lista todos os alunos"""
-    return [
-        {
-            "codigo": "AL_LUC4S",
-            "nome": "lucas",
-            "tipo": TipoUsuario.ALUNO,
-        },
-        {
-            "codigo": "AL_F3L1P3",
-            "nome": "felipe",
-            "tipo": TipoUsuario.ALUNO,
-        },
-    ]
+    def listar_info_aluno(self, id_aluno: int) -> UsuarioSchema:
+        return self.listar_todos_alunos()[id_aluno % 3]
+    
+    def listar_todos_professores(self) -> list[UsuarioSchema]:
+        professores = [
+            {"codigo": "PF_M4R14", "nome": "Maria", "tipo": TipoUsuario.PROFESSOR},
+            {"codigo": "PF_J040", "nome": "João", "tipo": TipoUsuario.PROFESSOR},
+            {"codigo": "PF_M4RC0S", "nome": "Marcos", "tipo": TipoUsuario.PROFESSOR},
+        ]
+        return [UsuarioSchema(**professor) for professor in professores]
 
-
-@router.get("/alunos/{id_aluno", response_model=UsuarioSchema)
-def pesquisar_aluno(id_aluno: int):
-    """Exibe as informações de um aluno em específico"""
-    return {
-        "codigo": f"codigo do {id_aluno}",
-        "nome": f"nome do {id_aluno}",
-        "tipo": TipoUsuario.ALUNO,
-    }
-
-
-@router.get("/professores", response_model=list[UsuarioSchema])
-def listar_todos_professores():
-    """Lista todos os professores"""
-    return [
-        {
-            "codigo": "PF_M4R14",
-            "nome": "Maria",
-            "tipo": TipoUsuario.PROFESSOR,
-        },
-        {
-            "codigo": "PF_J040",
-            "nome": "João",
-            "tipo": TipoUsuario.PROFESSOR,
-        },
-    ]
-
-
-@router.get("/professores/{id_professor}", response_model=UsuarioSchema)
-def pesquisar_professor(id_professor: int):
-    """Exibe as informações de um professor em específico"""
-    return {
-        "codigo": f"codigo do {id_professor}",
-        "nome": f"nome do {id_professor}",
-        "tipo": TipoUsuario.PROFESSOR,
-    }
+    def listar_info_professor(self, id_professor: int) -> UsuarioSchema:
+        return self.listar_todos_professores()[id_professor % 3]

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from sistema_escolar.controladores import boletim, materias, usuarios
+from sistema_escolar.rotas import boletim, materias, usuarios
 
 
 app = FastAPI(title="Sistema Escolar")
