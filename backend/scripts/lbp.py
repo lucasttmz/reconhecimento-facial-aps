@@ -21,7 +21,7 @@ def LBP_3x3(imagem):
     return imagem_final
 
 
-imagem = cv2.imread('img/treinamento/p1/1.jpg', cv2.IMREAD_GRAYSCALE)
+imagem = cv2.imread('img/treinamento/lucas/1.jpg', cv2.IMREAD_GRAYSCALE)
 haarcascades = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml') # type: ignore
 rostos = haarcascades.detectMultiScale(imagem, minSize=TAMANHO_MINIMO)
 

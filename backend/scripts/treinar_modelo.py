@@ -43,10 +43,6 @@ caminho_das_fotos = "img/treinamento"
 imagens, ids, nomes = carregar_imagens_do_treinamento(caminho_das_fotos)
 
 print(f"Treinado com {len(imagens)} fotos para {ids[-1] + 1} pessoas")
-
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
 lbph = cv2.face.LBPHFaceRecognizer_create() # type: ignore
 lbph.train(imagens, ids)
 lbph.save("modelo.yml")
