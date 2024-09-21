@@ -40,14 +40,28 @@ class MateriaControle():
         }   
         return MateriaSchema(**materia)
     
-    def criar_nova_materia(self, nome: str, codigo_professor: str, codigo_alunos: list[str], data_inicio: date, data_fim: date):
+    # TODO
+    # Materia
+    # Pesquisar Materia por ID (id_materia) -> Materia
+    # Criar Materia (MateriaSchema) -> id_materia
+    # Atualizar Materia (MateriaSchema) -> id_materia
+    # Apagar Materia (id_materia) -> None
+    # lucas — Hoje às 18:34
+
+    def criar_nova_materia(self, materia: MateriaSchema) -> int:
         # TODO: Lógica de criar matéria
-        return MensagemSchema(mensagem=f"{nome} criada com sucesso!")
+        pass
+
+    def buscar_materia_por_id(self, id: int) -> MateriaSchema:
+        pass
     
-    def atualizar_materia(self, nome: str, codigo_professor: str, codigo_alunos: list[str], data_inicio: date, data_fim: date):
+    def atualizar_materia(self, id: int, materia_atualizada: MateriaSchema) -> int:
         # TODO: Lógica de atualizar matéria
-        return MensagemSchema(mensagem=f"{nome} atualizada com sucesso!")
+        pass
     
+    def deletar_materia(self, id: int) -> None:
+        pass
+
     def atualizar_nota_e_faltas(self, id_materia: int, id_aluno: int, nota: float | None, faltas: float | None) -> MensagemSchema:
         # TODO: Lógica de atualizar a nota/faltas
         return MensagemSchema(mensagem="Nota e faltas atualizadas com sucesso!")

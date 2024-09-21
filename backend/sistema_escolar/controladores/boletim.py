@@ -30,3 +30,11 @@ class BoletimControle():
         boletim = self.listar_boletim_aluno_em_materia(id_aluno, id_materia)
 
         return BoletimParaProfessorSchema(aluno=aluno, faltas=boletim.faltas, nota=boletim.faltas, materia=boletim.materia)
+
+    # TODO
+    # Boletim
+    # Pesquisar Materias por Aluno (id_aluno) -> list[Materia]
+    # Pesquisar TODOS Alunos por materia (id_materia) -> list[Usuário]
+    # Pesquisar Boletim por materia (id_aluno, id_materia) -> Boletim
+    # Pesquisar TODOS Boletins por aluno (id_aluno) -> list[Boletim]
+    # Atualizar Boletim (id_boletim, AtualizarBoletimSchema) -> None
