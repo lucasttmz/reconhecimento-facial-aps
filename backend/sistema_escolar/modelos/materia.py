@@ -8,6 +8,7 @@ from sistema_escolar.modelos.usuario import UsuarioSchema
 class Materia(BaseModel):
     id_materia: int
     id_professor: int
+    nome: str
     data_inicio: date
     data_fim: date
 
@@ -18,6 +19,13 @@ class MateriaSchema(BaseModel):
     data_inicio: date
     data_fim: date
     alunos: list[UsuarioSchema]
+
+
+class CriarMateriaSchema(BaseModel):
+    nome: str
+    codigo_professor: str
+    data_inicio: date
+    data_fim: date
 
 
 class MateriaPublicSchema(BaseModel):

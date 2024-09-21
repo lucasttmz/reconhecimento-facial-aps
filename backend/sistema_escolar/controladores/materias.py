@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from random import randint
 
 from sistema_escolar.modelos.materia import MateriaSchema
@@ -40,10 +40,10 @@ class MateriaControle():
         }   
         return MateriaSchema(**materia)
     
-    def atualizar_nota(self, id_materia: int, id_aluno: int, nota: float) -> MensagemSchema:
-        # TODO: Lógica de atualizar a nota
-        return MensagemSchema(mensagem=f"Nota atualizada com sucesso: {nota}")
+    def criar_nova_materia(self, nome: str, id_professor: int, data_inicio: date, data_fim: date):
+        # TODO: Lógica de criar matéria
+        return MensagemSchema(mensagem=f"{nome} criada com sucesso!")
     
-    def atualizar_qtd_faltas(self, id_materia: int, id_aluno: int, faltas: int) -> MensagemSchema:
-        # TODO: Lógica de atualizar a qtd. faltas
-        return MensagemSchema(mensagem=f"Falta atualizada com sucesso: {faltas}")
+    def atualizar_nota_e_faltas(self, id_materia: int, id_aluno: int, nota: float | None, faltas: float | None) -> MensagemSchema:
+        # TODO: Lógica de atualizar a nota/faltas
+        return MensagemSchema(mensagem="Nota e faltas atualizadas com sucesso!")

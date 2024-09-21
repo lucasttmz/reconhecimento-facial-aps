@@ -24,9 +24,6 @@ class BoletimParaProfessorSchema(BaseModel):
     faltas: float
 
 
-class FaltaSchema(BaseModel):
+class AtualizarBoletimSchema(BaseModel):
     faltas: int = Field(ge=0)
-
-
-class NotaSchema(BaseModel):
     nota: float = Field(ge=0, lt=10)
