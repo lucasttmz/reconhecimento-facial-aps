@@ -1,0 +1,9 @@
+class AutenticacaoControle():
+    def realizar_login(self):
+        ...
+    
+    def cadastrar_usuario(self):
+        ...
+
+    def realizar_biometria(self):
+        ...

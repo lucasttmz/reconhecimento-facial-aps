@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from sistema_escolar.modelos.materia import MateriaSchema, CriarMateriaSchema
+from sistema_escolar.modelos.materia import MateriaSchema, CriarAtualizarMateriaSchema
 from sistema_escolar.modelos.boletim import (
     BoletimParaProfessorSchema,
     AtualizarBoletimSchema,
@@ -31,7 +31,7 @@ def todas_as_materias(controle: T_MateriaControle):
 
 
 @router.post("/", response_model=MensagemSchema)
-def criar_materia(materia: CriarMateriaSchema, controle: T_MateriaControle):
+def criar_materia(materia: CriarAtualizarMateriaSchema, controle: T_MateriaControle):
     """Cria uma nova matéria associada a um professor"""
 
     return controle.criar_nova_materia(**materia.model_dump())
@@ -43,6 +43,13 @@ def pesquisar_materia(id_materia: int, controle: T_MateriaControle):
 
     return controle.listar_materia(id_materia)
     
+
+@router.put("/{id_materia}", response_model=MensagemSchema)
+def atualizar_materia(id_materia: int, materia: CriarAtualizarMateriaSchema, controle: T_MateriaControle):
+    """Cria uma nova matéria associada a um professor"""
+
+    return controle.atualizar_materia(**materia.model_dump())
+
 
 @router.get("/{id_materia}/aluno/{id_aluno}", response_model=BoletimParaProfessorSchema)
 def materia_do_aluno(id_materia: int, id_aluno: int, controle: T_BoletimControle):

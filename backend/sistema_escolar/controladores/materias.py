@@ -40,9 +40,13 @@ class MateriaControle():
         }   
         return MateriaSchema(**materia)
     
-    def criar_nova_materia(self, nome: str, id_professor: int, data_inicio: date, data_fim: date):
+    def criar_nova_materia(self, nome: str, codigo_professor: str, codigo_alunos: list[str], data_inicio: date, data_fim: date):
         # TODO: Lógica de criar matéria
         return MensagemSchema(mensagem=f"{nome} criada com sucesso!")
+    
+    def atualizar_materia(self, nome: str, codigo_professor: str, codigo_alunos: list[str], data_inicio: date, data_fim: date):
+        # TODO: Lógica de atualizar matéria
+        return MensagemSchema(mensagem=f"{nome} atualizada com sucesso!")
     
     def atualizar_nota_e_faltas(self, id_materia: int, id_aluno: int, nota: float | None, faltas: float | None) -> MensagemSchema:
         # TODO: Lógica de atualizar a nota/faltas

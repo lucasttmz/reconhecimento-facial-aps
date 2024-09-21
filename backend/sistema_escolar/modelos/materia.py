@@ -21,15 +21,16 @@ class MateriaSchema(BaseModel):
     alunos: list[UsuarioSchema]
 
 
-class CriarMateriaSchema(BaseModel):
+class CriarAtualizarMateriaSchema(BaseModel):
     nome: str
     codigo_professor: str
     data_inicio: date
     data_fim: date
+    codigo_alunos: list[str]
 
 
 class MateriaPublicSchema(BaseModel):
-    """Matéria sem os dados do professor"""
+    """Matéria sem os dados do professor e alunos"""
 
     nome: str
     professor: str
