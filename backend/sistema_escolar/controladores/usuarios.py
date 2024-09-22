@@ -23,3 +23,18 @@ class UsuarioControle():
 
     def listar_info_professor(self, id_professor: int) -> UsuarioSchema:
         return self.listar_todos_professores()[id_professor % 3]
+    
+    # TODO
+    # Usuário
+    # Pesquisar Usuário por ID (id_aluno) -> Usuário
+    # Criar Usuário ( UsuárioSchema) -> id_usuario
+    # Atualizar Usuário (id_usuario,  UsuárioSchema) -> None
+
+    def criar_usuario(self, nome_usuario: UsuarioSchema) -> int:
+        pass
+
+    def buscar_usuario_por_id(self, id: int) -> UsuarioSchema:
+        pass
+
+    def atualizar_usuario(self, id: int, usuario_atualizado: UsuarioSchema) -> int:
+        pass
