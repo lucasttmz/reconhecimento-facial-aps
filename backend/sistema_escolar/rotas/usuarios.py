@@ -17,7 +17,7 @@ def listar_todos_alunos(controle: T_UsuarioControle):
     return controle.listar_todos_alunos()
 
 
-@router.get("/alunos/{id_aluno}", response_model=UsuarioSchema)
+@router.get("/alunos/{id_aluno", response_model=UsuarioSchema)
 def pesquisar_aluno(id_aluno: int, controle: T_UsuarioControle):
     """Exibe as informações de um aluno em específico"""
     
