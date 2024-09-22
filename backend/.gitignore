@@ -4,4 +4,3 @@ __pycache__/
 .ruff_cache
 scripts/img
 scripts/modelo.yml
-*.db
