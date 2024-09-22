@@ -21,6 +21,7 @@ opencv-contrib-python==4.10.0.84
 pydantic==2.9.1
 pydantic_core==2.23.3
 Pygments==2.18.0
+PyJWT==2.9.0
 python-dotenv==1.0.1
 python-multipart==0.0.9
 PyYAML==6.0.2
