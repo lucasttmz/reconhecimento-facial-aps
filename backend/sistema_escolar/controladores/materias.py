@@ -57,11 +57,8 @@ class MateriaControle():
     
     def atualizar_materia(self, id: int, materia_atualizada: MateriaSchema) -> int:
         # TODO: Lógica de atualizar matéria
-        pass
+        return MensagemSchema(mensagem=f"{nome} atualizada com sucesso!")
     
-    def deletar_materia(self, id: int) -> None:
-        pass
-
     def atualizar_nota_e_faltas(self, id_materia: int, id_aluno: int, nota: float | None, faltas: float | None) -> MensagemSchema:
         # TODO: Lógica de atualizar a nota/faltas
         return MensagemSchema(mensagem="Nota e faltas atualizadas com sucesso!")
