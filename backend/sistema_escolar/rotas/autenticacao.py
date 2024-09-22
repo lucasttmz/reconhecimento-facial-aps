@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 from os import environ
 from random import randint
-from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -40,7 +39,7 @@ def usuario_logado(token: HTTPAuthorizationCredentials = Depends(jwt_token)):
 
 def criar_token(dados: dict):
     copia_dados = dados.copy()
-    expiracao = datetime.now(tz=ZoneInfo("UTC")) + timedelta(
+    expiracao = datetime.utcnow() + timedelta(
         minutes=EXPIRACAO_TOKEN_MIN
     )
     copia_dados.update({"exp": expiracao})
