@@ -4,7 +4,6 @@ from random import randint
 from sistema_escolar.modelos.materia import MateriaSchema
 from sistema_escolar.modelos.usuario import TipoUsuario
 from sistema_escolar.modelos.genericos import MensagemSchema
-from sistema_escolar.dal.materias import MateriaDAO
 
 
 class MateriaControle():
@@ -50,13 +49,13 @@ class MateriaControle():
     # lucas — Hoje às 18:34
 
     def criar_nova_materia(self, materia: MateriaSchema) -> int:
-        materiaDAO = MateriaDAO()
-        return materiaDAO.cadastrar_materia(materia)
+        # TODO: Lógica de criar matéria
+        pass
 
     def buscar_materia_por_id(self, id: int) -> MateriaSchema:
         pass
     
-    def atualizar_materia(self, id: int, materia_atualizada: MateriaSchema) -> MateriaSchema:
+    def atualizar_materia(self, id: int, materia_atualizada: MateriaSchema) -> int:
         # TODO: Lógica de atualizar matéria
         pass
     
