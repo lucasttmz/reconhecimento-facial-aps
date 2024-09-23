@@ -1,80 +1,28 @@
 from sistema_escolar.modelos.materia import Materia
-from sistema_escolar.modelos.materia import MateriaSchema
 from sistema_escolar.dal.conexao import Conexao
+from sistema_escolar.dal.conexao import TipoRetorno
+from datetime import datetime
 
 class MateriaDAO():
-    def cadastrar_materia(self, materia: MateriaSchema) -> int:
-        stmt: str = f"""
-            INSERT INTO materia (nome, id_professor, data_inicio, data_fim) 
-            VALUES (
-                '{materia.nome}', 
-                {materia.professor.codigo}, 
-                '{materia.data_inicio}', 
-                '{materia.data_fim}');
-        """
+    def listar_todas_materias(self) -> list[Materia]:
         con = Conexao()
+        res = con.fetch_query("SELECT * FROM materia", TipoRetorno.FETCHALL)
+        resultado: list[Materia] = []
 
-        try:
-            con.iniciar()
-            cursor = con.conn.cursor()
-            res = cursor.execute(stmt)
-            resultado = res.lastrowid
-        except Exception as erro:
-            print("Erro ao cadastrar materia: " + erro)
-            resultado = -1
-        finally:
-            con.fechar()
+        for row in res:
 
+            print(datetime.now().date())
+            print(str(row["data_inicio"]))
+            # print(datetime.strptime(str(row["data_inicio"]), "%y-%m-%d %H:%M:%S").date())
+
+            materia = {
+                "id_materia" : row["id_materia"],
+                "id_professor" : row["id_professor"],
+                "nome" : row["nome"],
+                "data_inicio" : datetime.now().date(),
+                "data_fim" : datetime.now().date()
+            }
+
+            resultado.append(Materia(**materia))
+            
         return resultado
-
-    def buscar_materia_por_id(self, id: int) -> Materia:
-        stmt = f"SELECT * FROM materia WHERE id_materia = {id}"
-        con = Conexao()
-
-        try:
-            con.iniciar()
-            cursor = con.conn.cursor()
-            res = cursor.execute(stmt)
-
-            id_materia, nome, id_professor, data_inicio, data_fim = res.fetchone()
-            resultado = Materia(id_materia, id_professor, nome, data_inicio, data_fim)
-        except Exception as erro:
-            print("Erro ao buscar materia por ID" + erro)
-        finally:
-            con.fechar()
-
-        return resultado
-    
-    def alterar_materia(self, id: int, alteracao: Materia) -> None:
-        stmt = f"""
-            UPDATE materia 
-            SET 
-                nome = {alteracao.nome}, 
-                id_professor = {alteracao.id_professor}, 
-                data_inicio = {alteracao.data_inicio}, 
-                data_fim = {alteracao.data_fim}
-            WHERE id_materia = {id}
-        """
-        con = Conexao()
-        
-        try:
-            con.iniciar()
-            cursor = con.conn.cursor()
-            cursor.execute(stmt)
-        except Exception as erro:
-            print("Erro ao alterar matéria: " + erro)
-        finally:
-            con.fechar()
-
-    def deletar_materia(self, id: int) -> None:
-        stmt = f"DELETE FROM materia WHERE id_materia = {id}"
-        con = Conexao()
-
-        try:
-            con.iniciar()
-            cursor = con.conn.cursor()
-            cursor.execute(stmt)
-        except Exception as erro:
-            print("Erro ao excluir matéria: " + erro)
-        finally:
-            con.fechar()

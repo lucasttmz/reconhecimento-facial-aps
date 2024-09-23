@@ -1,3 +1,11 @@
+/********** CRIAR O ARQUIVO DO BANCO DE DADOS **************
+ *                                                         *
+ * -- cmd ou powershell --                                 *
+ * C:\[...]\backend\sistema_escolar\dal\db> sqlite3 aps.db *
+ * sqlite3> aps.db < init.sql                              *
+ *                                                         *
+ ***********************************************************/
+
 CREATE TABLE usuario (
     id_usuario INTEGER PRIMARY KEY,
     codigo VARCHAR(32),

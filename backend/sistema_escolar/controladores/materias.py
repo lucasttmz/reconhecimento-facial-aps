@@ -1,22 +1,35 @@
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 from random import randint
 
 from sistema_escolar.modelos.materia import MateriaSchema
 from sistema_escolar.modelos.usuario import TipoUsuario
 from sistema_escolar.modelos.genericos import MensagemSchema
 from sistema_escolar.dal.materias import MateriaDAO
+from sistema_escolar.controladores.usuarios import UsuarioControle
 
 
 class MateriaControle():
-    def listar_todas_materias(self, id_usuario: int) -> list[MateriaSchema]:
-        # TODO: Verificar se usuário é diretor ou professor
-        permissao_professor = id_usuario % 2 == 0 # Simula permissão
+    def listar_todas_materias(self) -> list[MateriaSchema]:
+        resultado: list[MateriaSchema] = []
+
+        materiaDAO = MateriaDAO()
+        materias = materiaDAO.listar_todas_materias()
         
-        qtd_materias = 3
-        if permissao_professor:
-            qtd_materias -= 1
-        
-        return [self.listar_materia(i) for i in range(qtd_materias)]
+        for materia in materias:
+
+            professor = UsuarioControle().listar_info_professor(materia.id_professor)
+
+            materiaSchema = {
+                "nome": materia.nome,
+                "professor": professor,
+                "data_inicio": materia.data_inicio,
+                "data_fim": materia.data_fim,
+                "alunos": []
+            }
+
+            resultado.append(MateriaSchema(**materiaSchema))
+
+        return resultado
     
     def listar_materia(self, id_materia: int) -> MateriaSchema:
         alunos = []

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from datetime import date
+from datetime import datetime, date
 
 from sistema_escolar.modelos.usuario import UsuarioSchema
 

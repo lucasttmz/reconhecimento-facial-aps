@@ -1,5 +1,5 @@
 from sistema_escolar.modelos.usuario import TipoUsuario, UsuarioSchema
-
+from sistema_escolar.dal.usuarios import UsuarioDAO
 
 class UsuarioControle():
     def listar_todos_alunos(self) -> list[UsuarioSchema]:
@@ -22,7 +22,18 @@ class UsuarioControle():
         return [UsuarioSchema(**professor) for professor in professores]
 
     def listar_info_professor(self, id_professor: int) -> UsuarioSchema:
-        return self.listar_todos_professores()[id_professor % 3]
+        print(id_professor)
+        
+        usuarioDAO = UsuarioDAO()
+        usuario = usuarioDAO.buscar_usuario_por_id(id_professor)
+
+        usuarioSchema = {
+            "codigo": usuario.codigo,
+            "nome": usuario.nome,
+            "tipo": usuario.tipo
+        }
+
+        return UsuarioSchema(**usuarioSchema)
     
     # TODO
     # Usuário

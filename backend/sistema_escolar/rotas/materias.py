@@ -24,10 +24,7 @@ def todas_as_materias(controle: T_MateriaControle):
     Professor: Lista todas as matérias que o professor está ensinando.
     Diretor: Lista todas as matérias registradas.
     """
-
-    # TODO: Pegar o id do usuário logado
-    id_aluno_atual = randint(0, 5)
-    return controle.listar_todas_materias(id_aluno_atual)
+    return controle.listar_todas_materias()
 
 
 @router.post("/", response_model=MensagemSchema)
