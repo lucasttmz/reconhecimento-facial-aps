@@ -1,13 +1,13 @@
 import { useRef } from "react";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-  } from "../ui/dialog";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import Webcam from "react-webcam";
 import { Button } from "../ui/button";
 import { Disc, LoaderCircle } from "lucide-react";
@@ -15,12 +15,12 @@ import { CameraHook } from "../../hooks/CameraHook";
 import { makeRequestProps } from "../../api/axios";
 
 interface CameraDialogProps {
-    trigerTitle: string;
+  trigerTitle: string;
 }
 
 export const CameraDialog = ({ trigerTitle }: CameraDialogProps) => {
   const webcamRef = useRef<Webcam>(null);
-  const videoConstraints = {facingMode: "user"};
+  const videoConstraints = { facingMode: "user" };
 
   const apiCall: makeRequestProps = {
     method: 'GET',
@@ -41,23 +41,23 @@ export const CameraDialog = ({ trigerTitle }: CameraDialogProps) => {
     'Autenticando': authenticating,
   };
 
-  
+
 
   return (
-      <Dialog>
-      <DialogTrigger>{trigerTitle}</DialogTrigger>
+    <Dialog>
+      <DialogTrigger className="bg-slate-900 text-white p-2 rounded">{trigerTitle}</DialogTrigger>
       <DialogContent className='px-10 max-w-[320px] rounded-xl'>
-        <DialogHeader> 
-            {Object.keys(statusTitle).map((key) => (
-              statusTitle[key] && (
-                <DialogTitle
-                  key={key}
-                  className='text-gray-800'
-                >
-                  {key}
-                </DialogTitle>
-              )
-            ))}
+        <DialogHeader>
+          {Object.keys(statusTitle).map((key) => (
+            statusTitle[key] && (
+              <DialogTitle
+                key={key}
+                className='text-gray-800'
+              >
+                {key}
+              </DialogTitle>
+            )
+          ))}
           <DialogDescription className='relative'>
             <Webcam
               width={512}
@@ -69,14 +69,14 @@ export const CameraDialog = ({ trigerTitle }: CameraDialogProps) => {
             />
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className='flex items-center justify-center'>
-          <Button 
+        <DialogFooter className='flex items-center justify-center '>
+          <Button
             className='bg-gray-800 w-fit'
             onClick={() => getPhotos()}
           >
             {Object.keys(statusButton).map((key) => (
               statusButton[key] && (
-                <span 
+                <span
                   key={key}
                   className='text-white'
                 >
@@ -85,15 +85,15 @@ export const CameraDialog = ({ trigerTitle }: CameraDialogProps) => {
               )
             ))}
 
-            {  !authenticating && (
-              <Disc 
+            {!authenticating && (
+              <Disc
                 size={24}
                 className='text-red-800 ml-2'
               />
             )}
 
-            {  authenticating && (
-              <LoaderCircle 
+            {authenticating && (
+              <LoaderCircle
                 size={24}
                 className='text-white ml-2 animate-spin'
               />

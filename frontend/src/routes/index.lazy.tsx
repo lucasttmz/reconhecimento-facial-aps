@@ -2,6 +2,7 @@ import { createLazyFileRoute } from '@tanstack/react-router'
 import { Button } from '../components/ui/button'
 
 import { CameraDialog } from '../components/Dialogs/CameraDialog';
+import { InputDialog } from '../components/Dialogs/InputDialog';
 
 export const Route = createLazyFileRoute('/')({
   component: Index,
@@ -29,11 +30,10 @@ function Index() {
           variant='default'
           className='text-white outline-none ring-0 focus:ring-0 h-[45px]'
         >
-          Registrar-se
+          <InputDialog/>
         </Button>
+        
       </div>
-
-      
     </section>
   )
 }
