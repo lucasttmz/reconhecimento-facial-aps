@@ -6,9 +6,10 @@ import { makeRequestProps } from "../api/axios";
 interface CameraHookProps {
     webcamRef: React.RefObject<Webcam>;
     apiCall: makeRequestProps;
+    onCaptureImagesR?: boolean;
 }
 
-export const CameraHook = ({ webcamRef, apiCall }: CameraHookProps) => {
+export const CameraHook = ({ webcamRef, apiCall, onCaptureImagesR}: CameraHookProps) => {
   const [arrayImagens, setArrayImagens] = useState<string[]>([]);
   const [authenticating, setAuthenticating] = useState<boolean>(false);
   const arrayImagensRef = useRef<string[]>([]);
@@ -35,15 +36,21 @@ export const CameraHook = ({ webcamRef, apiCall }: CameraHookProps) => {
     setTimeout(async () => {
       clearInterval(intervalPhoto);
 
-      console.log(arrayImagensRef.current); // Use the ref here
+      if(onCaptureImagesR){
+        setAuthenticating(false)
+      }
+      else{
+        console.log(arrayImagensRef.current); // Use the ref here
 
-      data = await apiService().makeRequest({
-        ...apiCall,
-        urlParams: [1,10], // Use the ref here
-      });
+        data = await apiService().makeRequest({
+          ...apiCall,
+          urlParams: [1,10], // Use the ref here
+        });
+      }
     }, 3000);
 
-    return data;
+    return data
+    
   };
 
 

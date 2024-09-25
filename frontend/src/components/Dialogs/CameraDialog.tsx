@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,21 +16,33 @@ import { makeRequestProps } from "../../api/axios";
 
 interface CameraDialogProps {
   trigerTitle: string;
+  onCaptureImages?: (images: string[]) => void;
 }
 
-export const CameraDialog = ({ trigerTitle }: CameraDialogProps) => {
+export const CameraDialog = ({ trigerTitle, onCaptureImages }: CameraDialogProps) => {
+ 
   const webcamRef = useRef<Webcam>(null);
   const videoConstraints = { facingMode: "user" };
+  let onCaptureImagesR: boolean = onCaptureImages ? true : false;
 
   const apiCall: makeRequestProps = {
     method: 'GET',
     path: 'autenticacao',
     subpath: 'autenticar-usuario',
-    urlParams: [1, 10],
+    urlParams: [],
   }
-
-  const { authenticating, getPhotos } = CameraHook({ webcamRef, apiCall });
-
+  
+  const {authenticating, getPhotos, arrayImagens} = CameraHook({ webcamRef, apiCall, onCaptureImagesR});
+  
+  
+  useEffect(() => {
+    if (onCaptureImages) {
+      onCaptureImages(arrayImagens)
+    }
+    
+  }, [arrayImagens, onCaptureImages]);
+  
+  
   const statusButton: { [key: string]: boolean } = {
     'Autenticando': authenticating,
     'Iniciar': !authenticating,
@@ -41,11 +53,9 @@ export const CameraDialog = ({ trigerTitle }: CameraDialogProps) => {
     'Autenticando': authenticating,
   };
 
-
-
   return (
-    <Dialog>
-      <DialogTrigger className="bg-slate-900 text-white p-2 rounded">{trigerTitle}</DialogTrigger>
+    <Dialog >
+      <DialogTrigger className="bg-slate-900 text-white p-2 rounded font-bold">{trigerTitle}</DialogTrigger>
       <DialogContent className='px-10 max-w-[320px] rounded-xl'>
         <DialogHeader>
           {Object.keys(statusTitle).map((key) => (
@@ -72,7 +82,7 @@ export const CameraDialog = ({ trigerTitle }: CameraDialogProps) => {
         <DialogFooter className='flex items-center justify-center '>
           <Button
             className='bg-gray-800 w-fit'
-            onClick={() => getPhotos()}
+            onClick={()=> getPhotos()}
           >
             {Object.keys(statusButton).map((key) => (
               statusButton[key] && (

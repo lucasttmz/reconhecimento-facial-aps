@@ -27,8 +27,8 @@ function Index() {
         />
 
         <Button
-          variant='default'
-          className='text-white outline-none ring-0 focus:ring-0 h-[45px]'
+          variant='secondary'
+          className='outline-none ring-0 focus:ring-0 h-[45px] font-bold'
         >
           <InputDialog/>
         </Button>
