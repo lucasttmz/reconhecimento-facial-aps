@@ -15,7 +15,7 @@ import { CameraDialog } from "./CameraDialog";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { api,makeRequestProps } from "../../api/axios";
-
+import { apiService } from "../../api/api";
 interface paramsPost {
   nome: string,
   sobrenome: string,
@@ -26,46 +26,51 @@ export const InputDialog = () => {
 
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true)
-
   const [params, setParams] = useState<paramsPost>({
     nome: '',
     sobrenome: '',
     fotos: []
   }) 
-
   const apiCall:makeRequestProps = {
     path: "/registrar",
     method: "POST",
-    params: params
+    params: {
+      nome: `${params.nome} ${params.sobrenome}`,
+      fotos: capturedImages
+    }
   }
-
   const handleCapturedImages = (images: string[]) => {
     
     if (images.length == 10) {
-      
-      setButtonDisabled(false)
+
+      if(params.nome != "" && params.sobrenome != ""){
+        setButtonDisabled(false)
+      }
+
       setParams({
         ...params,
         fotos: capturedImages
       })
     }
-
     setCapturedImages(images);
   };
 
-  const setNameChange = (e:any)=>{
-    
+  const setInputValue = (e:any, inputName:string)=>{
+
     setParams({
       ...params,
-      nome: e.target.value,
+      [inputName]: e.target.value,
     })
+
+    if(params.nome != "" && params.sobrenome != "" && capturedImages.length == 10){
+      setButtonDisabled(false)
+    }
   
   }
-  const setFullNameChange = (e:any)=>{
-    setParams({
-      ...params,
-      sobrenome: e.target.value,
-    })
+  const apiPostService = async ()=>{
+
+    const data = await apiService().makeRequest(apiCall)
+    console.log(data)
   }
 
   return (
@@ -79,12 +84,12 @@ export const InputDialog = () => {
             <div className="flex flex-col gap-4">
               <div className="flex items-start flex-col gap-2">
                 <Label htmlFor="text"> Primeiro Nome </Label>
-                <Input type="text" placeholder="Nome" onChange={setNameChange} />
+                <Input type="text" placeholder="Nome" onChange={(e)=>setInputValue(e,"nome")} />
               </div>
               
               <div className="flex items-start flex-col gap-2">
                 <Label htmlFor="text"> Sobrenome </Label>
-                <Input type="text" placeholder="Sobrenome" onChange={setFullNameChange}/>
+                <Input type="text" placeholder="Sobrenome" onChange={(e)=>setInputValue(e,"sobrenome")}/>
               </div>
 
               <div className="flex items-start flex-col gap-2">
@@ -109,7 +114,7 @@ export const InputDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-col">
-          <Button type="submit" disabled={buttonDisabled} onClick={()=> new api().makeRequest(apiCall)}>
+          <Button type="submit" disabled={buttonDisabled} onClick={apiPostService}>
             <Link to="/" >Enviar</Link>
           </Button>
         </DialogFooter>
