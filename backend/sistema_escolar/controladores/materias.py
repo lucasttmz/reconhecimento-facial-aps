@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from random import randint
 
-from sistema_escolar.modelos.materia import MateriaSchema
-from sistema_escolar.modelos.usuario import TipoUsuario
+from sistema_escolar.modelos.materia import MateriaSchema, MateriaPublicSchema
+from sistema_escolar.modelos.usuario import TipoUsuario, UsuarioSchema
 from sistema_escolar.modelos.genericos import MensagemSchema
 from sistema_escolar.dal.materias import MateriaDAO
 from sistema_escolar.controladores.usuarios import UsuarioControle
@@ -18,6 +18,7 @@ class MateriaControle():
         for materia in materias:
 
             professor = UsuarioControle().listar_info_professor(materia.id_professor)
+            #alunos = BoletimControle().listar_alunos_por_materia(materia.id_materia)
 
             materiaSchema = {
                 "nome": materia.nome,
@@ -32,27 +33,19 @@ class MateriaControle():
         return resultado
     
     def listar_materia(self, id_materia: int) -> MateriaSchema:
-        alunos = []
-        if id_materia % 2:
-            alunos = [
-                {"codigo": "AL_LUC4S", "nome": "lucas", "tipo": TipoUsuario.ALUNO},
-                {"codigo": "AL_F3L1P3", "nome": "felipe", "tipo": TipoUsuario.ALUNO},
-            ]
+        materiaDAO = MateriaDAO()
+        materia = materiaDAO.buscar_materia_id(id_materia)
+        professor = UsuarioControle().listar_info_professor(materia.id_professor)
 
-        nomes_materias = ("Matemática", "Inglês", "Física")
-        professores = ("João", "Mária", "Felipe")
-        materia = {
-            "nome": nomes_materias[id_materia % 3],
-            "professor": {
-                "codigo": f"Cod. do {professores[id_materia % 3]}",
-                "nome": professores[id_materia % 3],
-                "tipo": TipoUsuario.PROFESSOR,
-            },
-            "data_inicio": datetime.now().date() - timedelta(days=randint(0, 10)),
-            "data_fim": datetime.now().date() + timedelta(days=randint(0, 10)),
-            "alunos": alunos,
-        }   
-        return MateriaSchema(**materia)
+        materiaSchema = {
+            "nome": materia.nome,
+            "professor": professor,
+            "data_inicio": materia.data_inicio,
+            "data_fim": materia.data_fim,
+            "alunos": []
+        }
+
+        return MateriaSchema(**materiaSchema)
     
     # TODO
     # Materia
