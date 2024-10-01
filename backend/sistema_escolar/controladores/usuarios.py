@@ -1,36 +1,58 @@
-from sistema_escolar.modelos.usuario import TipoUsuario, UsuarioSchema
+from sistema_escolar.modelos.usuario import TipoUsuario, UsuarioSchema, Usuario
 from sistema_escolar.dal.usuarios import UsuarioDAO
 
 class UsuarioControle():
     def listar_todos_alunos(self) -> list[UsuarioSchema]:
-        alunos = [
-            {"codigo": "AL_LUC4S", "nome": "Lucas", "tipo": TipoUsuario.ALUNO},
-            {"codigo": "AL_F3L1P3", "nome": "Felipe", "tipo": TipoUsuario.ALUNO},
-            {"codigo": "AL_S4MU3L", "nome": "Samuel", "tipo": TipoUsuario.ALUNO},
-        ]
-        return [UsuarioSchema(**aluno) for aluno in alunos]
+        usuarioDAO = UsuarioDAO()
+        alunos = usuarioDAO.todos_os_alunos()
+
+        resultado: list[UsuarioSchema] = []
+        for aluno in alunos:
+            usuarioSchema = {
+                "codigo" : aluno.codigo,
+                "nome": aluno.nome,
+                "tipo": aluno.tipo
+            }
+            resultado.append(UsuarioSchema(**usuarioSchema))
+
+        return resultado
 
     def listar_info_aluno(self, id_aluno: int) -> UsuarioSchema:
-        return self.listar_todos_alunos()[id_aluno % 3]
+        usuarioDAO = UsuarioDAO()
+        aluno = usuarioDAO.buscar_aluno_por_id(id_aluno)
+    
+        usuarioSchema = {
+            "codigo": aluno.codigo,
+            "nome": aluno.nome,
+            "tipo": aluno.tipo
+        }
+
+        return UsuarioSchema(**usuarioSchema)
+
     
     def listar_todos_professores(self) -> list[UsuarioSchema]:
-        professores = [
-            {"codigo": "PF_M4R14", "nome": "Maria", "tipo": TipoUsuario.PROFESSOR},
-            {"codigo": "PF_J040", "nome": "João", "tipo": TipoUsuario.PROFESSOR},
-            {"codigo": "PF_M4RC0S", "nome": "Marcos", "tipo": TipoUsuario.PROFESSOR},
-        ]
-        return [UsuarioSchema(**professor) for professor in professores]
+        usuarioDAO = UsuarioDAO()
+        professores = usuarioDAO.todos_os_professores()
+
+        resultado: list[UsuarioSchema] = []
+        for professor in professores:
+            usuarioSchema = {
+                "codigo" : professor.codigo,
+                "nome": professor.nome,
+                "tipo": professor.tipo
+            }
+            resultado.append(UsuarioSchema(**usuarioSchema))
+
+        return resultado
 
     def listar_info_professor(self, id_professor: int) -> UsuarioSchema:
-        print(id_professor)
-        
         usuarioDAO = UsuarioDAO()
-        usuario = usuarioDAO.buscar_usuario_por_id(id_professor)
+        professor = usuarioDAO.buscar_usuario_por_id(id_professor)
 
         usuarioSchema = {
-            "codigo": usuario.codigo,
-            "nome": usuario.nome,
-            "tipo": usuario.tipo
+            "codigo": professor.codigo,
+            "nome": professor.nome,
+            "tipo": professor.tipo
         }
 
         return UsuarioSchema(**usuarioSchema)
