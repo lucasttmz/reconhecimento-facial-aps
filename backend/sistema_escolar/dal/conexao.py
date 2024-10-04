@@ -63,16 +63,18 @@ class Conexao():
 
     def dml_query(self, query: str, mensagem_debug: str = "Erro") -> bool:
         stmt = limpar_query(query)
-        resultado = 0
+        resultado = True
 
         try:
             cursor = self.iniciar()
             cursor.executescript(stmt)
-            resultado = cursor.rowcount
+            
+            # if cursor.rowcount < 0:
+            #     resultado = False
         
         except Exception as erro:
             print(f"{mensagem_debug}: {erro}")
-            resultado = -1
+            resultado = False
         finally:
             self.fechar()
         

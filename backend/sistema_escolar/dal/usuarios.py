@@ -18,13 +18,13 @@ class UsuarioDAO():
     
     def buscar_professor_por_id(self, id: int) -> Usuario:
         con = Conexao()
-        res = con.fetch_query(f"SELECT * FROM usuario WHERE id_usuario = {id} AND tipo = 2", TipoRetorno.FETCHONE)
+        row = con.fetch_query(f"SELECT * FROM usuario WHERE id_usuario = {id} AND tipo = 2", TipoRetorno.FETCHONE)
         
         usuario = {
-            "id_usuario": res["id_usuario"],
-            "codigo": res["codigo"],
-            "nome": res["nome"],
-            "tipo": res["tipo"]
+            "id_usuario": row.get("id_usuario", 0),
+            "codigo": row["codigo"],
+            "nome": row["nome"],
+            "tipo": row["tipo"]
         }
 
         return Usuario(**usuario)

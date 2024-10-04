@@ -47,7 +47,7 @@ class UsuarioControle():
 
     def listar_info_professor(self, id_professor: int) -> UsuarioSchema:
         usuarioDAO = UsuarioDAO()
-        professor = usuarioDAO.buscar_usuario_por_id(id_professor)
+        professor = usuarioDAO.buscar_professor_por_id(id_professor)
 
         usuarioSchema = {
             "codigo": professor.codigo,

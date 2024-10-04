@@ -7,20 +7,20 @@ class Boletim(BaseModel):
     id_boletim: int
     id_usuario: int
     id_materia: int
-    nota: float
+    nota: float | None
     faltas: float
 
 
 class BoletimParaAlunoSchema(BaseModel):
     materia: MateriaPublicSchema
-    nota: float
+    nota: float | None
     faltas: float
 
 
 class BoletimParaProfessorSchema(BaseModel):
     aluno: UsuarioSchema
     materia: MateriaPublicSchema
-    nota: float
+    nota: float | None
     faltas: float
 
 

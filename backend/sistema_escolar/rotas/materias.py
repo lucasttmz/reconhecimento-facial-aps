@@ -31,7 +31,7 @@ def todas_as_materias(controle: T_MateriaControle):
 def criar_materia(materia: CriarAtualizarMateriaSchema, controle: T_MateriaControle):
     """Cria uma nova matéria associada a um professor"""
 
-    return controle.criar_nova_materia(**materia.model_dump())
+    return controle.criar_nova_materia(materia)
     
 
 @router.get("/{id_materia}", response_model=MateriaSchema)
@@ -44,8 +44,7 @@ def pesquisar_materia(id_materia: int, controle: T_MateriaControle):
 @router.put("/{id_materia}", response_model=MensagemSchema)
 def atualizar_materia(id_materia: int, materia: CriarAtualizarMateriaSchema, controle: T_MateriaControle):
     """Cria uma nova matéria associada a um professor"""
-
-    return controle.atualizar_materia(**materia.model_dump())
+    return controle.atualizar_materia(id_materia, materia)
 
 
 @router.get("/{id_materia}/aluno/{id_aluno}", response_model=BoletimParaProfessorSchema)
