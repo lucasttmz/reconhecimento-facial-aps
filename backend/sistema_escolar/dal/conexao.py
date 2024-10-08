@@ -1,12 +1,12 @@
-from sqlite3 import connect, Cursor
+from sqlite3 import connect, Cursor, Connection
 from pathlib import Path
 from enum import IntEnum
 
+import os
 import re
 
-
-CAMINHO_DB = Path("sistema_escolar/dal/db/aps.db")
-
+# CAMINHO_DB = Path("backend\\sistema_escolar\\dal\\db\\aps.db") # Caminho relativo
+CAMINHO_DB = os.path.join(os.getcwd(), "dal\\db\\aps.db") # Caminho completo desde o C:\
 
 class TipoRetorno(IntEnum):
     FETCHONE = 1
@@ -21,46 +21,42 @@ def limpar_query(texto: str) -> str:
     else:
         return query_limpa + ";"
 
+def linha_para_dicionario(cursor: Cursor, row) -> dict | None:
+    d_row: dict = {}
+    for i, col in enumerate(cursor.description):
+        d_row[col[0]] = row[i]
+    return d_row
+
 
 class Conexao:
+    def __init__(self):
+        self.conn: Connection = None
+
     def iniciar(self) -> Cursor:
         self.conn = connect(CAMINHO_DB)
+        self.conn.row_factory = linha_para_dicionario
         return self.conn.cursor()
 
     def fechar(self) -> None:
         if self.conn is not None:
             self.conn.close()
 
-    def fetch_query(
-        self, query: str, tipo_retorno: TipoRetorno, mensagem_debug: str = "Erro"
-    ) -> list[dict] | dict | None:
+    def fetch_query(self, query: str, tipo_retorno: TipoRetorno = TipoRetorno.FETCHONE, mensagem_debug: str = "Erro") -> list[dict] | dict | None:
         stmt = limpar_query(query)
         resultado = None
 
         try:
             cursor = self.iniciar()
-            res = cursor.execute(stmt)
-            rows = res.fetchall()
+            result = cursor.execute(stmt)
 
-            cols = []
-            for tup in res.description:
-                cols.append(tup[0])
-
+            if tipo_retorno == TipoRetorno.FETCHONE:
+                resultado = result.fetchone()
+                
             if tipo_retorno == TipoRetorno.FETCHALL:
                 resultado = []
-                for row in rows:
-                    i = 0
-                    dict_row = {}
-                    for i in range(len(row)):
-                        dict_row[cols[i]] = row[i]
-                        i += 1
-                    resultado.append(dict_row)
-            elif tipo_retorno == TipoRetorno.FETCHONE:
-                resultado = {}
-                i = 0
-                for item in rows[0]:
-                    resultado[cols[i]] = item
-                    i += 1
+                for linha in result.fetchall():
+                    resultado.append(linha)
+
 
         except Exception as erro:
             print(f"{mensagem_debug}: {erro}")
@@ -68,11 +64,11 @@ class Conexao:
         finally:
             self.fechar()
 
+        print(resultado)
+
         return resultado
 
-    def dml_query(
-        self, query: str, mensagem_debug: str = "Erro", checar_alteracao: bool = False
-    ) -> bool:
+    def dml_query(self, query: str, mensagem_debug: str = "Erro", checar_alteracao: bool = False) -> bool:
         stmt = limpar_query(query)
         resultado = True
 
