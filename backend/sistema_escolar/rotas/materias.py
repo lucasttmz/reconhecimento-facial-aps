@@ -1,9 +1,12 @@
-from random import randint
-from typing import Annotated
+from typing import Annotated, Union
 
 from fastapi import APIRouter, Depends
 
-from sistema_escolar.modelos.materia import MateriaSchema, CriarAtualizarMateriaSchema
+from sistema_escolar.modelos.materia import (
+    MateriaSchema,
+    MateriaPublicSchema,
+    CriarAtualizarMateriaSchema,
+)
 from sistema_escolar.modelos.boletim import (
     BoletimParaProfessorSchema,
     AtualizarBoletimSchema,
@@ -18,12 +21,13 @@ T_MateriaControle = Annotated[MateriaControle, Depends(MateriaControle)]
 T_BoletimControle = Annotated[BoletimControle, Depends(BoletimControle)]
 
 
-@router.get("/", response_model=list[MateriaSchema])
+@router.get("/", response_model=Union[list[MateriaSchema], list[MateriaPublicSchema]])
 def todas_as_materias(controle: T_MateriaControle):
     """
     Professor: Lista todas as matérias que o professor está ensinando.
     Diretor: Lista todas as matérias registradas.
     """
+
     return controle.listar_todas_materias()
 
 
@@ -32,17 +36,19 @@ def criar_materia(materia: CriarAtualizarMateriaSchema, controle: T_MateriaContr
     """Cria uma nova matéria associada a um professor"""
 
     return controle.criar_nova_materia(materia)
-    
+
 
 @router.get("/{id_materia}", response_model=MateriaSchema)
 def pesquisar_materia(id_materia: int, controle: T_MateriaControle):
     """Exibe informações da matéria e todos os alunos cursando ela"""
 
     return controle.listar_materia(id_materia)
-    
+
 
 @router.put("/{id_materia}", response_model=MensagemSchema)
-def atualizar_materia(id_materia: int, materia: CriarAtualizarMateriaSchema, controle: T_MateriaControle):
+def atualizar_materia(
+    id_materia: int, materia: CriarAtualizarMateriaSchema, controle: T_MateriaControle
+):
     """Cria uma nova matéria associada a um professor"""
     return controle.atualizar_materia(id_materia, materia)
 
@@ -55,7 +61,14 @@ def materia_do_aluno(id_materia: int, id_aluno: int, controle: T_BoletimControle
 
 
 @router.put("/{id_materia}/aluno/{id_aluno}", response_model=MensagemSchema)
-def lancar_nota_e_faltas(id_materia: int, id_aluno: int, boletim: AtualizarBoletimSchema, controle: T_MateriaControle):
+def lancar_nota_e_faltas(
+    id_materia: int,
+    id_aluno: int,
+    boletim: AtualizarBoletimSchema,
+    controle: T_MateriaControle,
+):
     """Lançar nota e faltas para o aluno"""
-    
-    return controle.atualizar_nota_e_faltas(id_materia, id_aluno, boletim.nota, faltas=boletim.faltas)
+
+    return controle.atualizar_nota_e_faltas(
+        id_materia, id_aluno, boletim.nota, faltas=boletim.faltas
+    )

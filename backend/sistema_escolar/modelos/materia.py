@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from datetime import datetime, date
+from datetime import date
 
 from sistema_escolar.modelos.usuario import UsuarioSchema
 
@@ -23,7 +23,7 @@ class MateriaSchema(BaseModel):
 
 class CriarAtualizarMateriaSchema(BaseModel):
     nome: str
-    codigo_professor: str
+    codigo_professor: int
     data_inicio: date
     data_fim: date
     codigo_alunos: list[str]

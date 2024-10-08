@@ -8,22 +8,22 @@ class Boletim(BaseModel):
     id_usuario: int
     id_materia: int
     nota: float | None
-    faltas: float
+    faltas: int
 
 
 class BoletimParaAlunoSchema(BaseModel):
     materia: MateriaPublicSchema
     nota: float | None
-    faltas: float
+    faltas: int
 
 
 class BoletimParaProfessorSchema(BaseModel):
     aluno: UsuarioSchema
     materia: MateriaPublicSchema
     nota: float | None
-    faltas: float
+    faltas: int
 
 
 class AtualizarBoletimSchema(BaseModel):
     faltas: int = Field(ge=0)
-    nota: float = Field(ge=0, lt=10)
+    nota: float = Field(ge=0, le=10)

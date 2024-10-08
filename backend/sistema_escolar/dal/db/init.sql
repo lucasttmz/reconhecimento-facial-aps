@@ -26,7 +26,7 @@ CREATE TABLE boletim (
     id_usuario INTEGER,
     id_materia INTEGER,
     nota FLOAT,
-    faltas FLOAT,
+    faltas INTEGER,
     FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
     FOREIGN KEY (id_materia) REFERENCES materia(id_materia)
 );
@@ -50,10 +50,10 @@ VALUES
     (NULL, 'Redes de Computadores', 2, '2024-09-01 14:00:00', '2025-01-31 16:00:00');
 
 --Boletins
-INSERT INTO boletim (id_boletim, id_usuario, id_materia)
+INSERT INTO boletim (id_boletim, id_usuario, id_materia, nota, faltas)
 VALUES
-    (NULL, 3, 1),
-    (NULL, 3, 2),
-    (NULL, 4, 1),
-    (NULL, 5, 3),
-    (NULL, 6, 2);
+    (NULL, 3, 1, 5, 0),
+    (NULL, 3, 2, NULL, 3),
+    (NULL, 4, 1, NULL, 0),
+    (NULL, 5, 3, 10, 0),
+    (NULL, 6, 2, 7.5, 3);

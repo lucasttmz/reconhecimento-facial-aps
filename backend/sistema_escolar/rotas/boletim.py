@@ -1,4 +1,3 @@
-from random import randint
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -10,12 +9,13 @@ from sistema_escolar.controladores.boletim import BoletimControle
 router = APIRouter(prefix="/boletim", tags=["boletim"])
 T_BoletimControle = Annotated[BoletimControle, Depends(BoletimControle)]
 
+
 @router.get("/", response_model=list[BoletimParaAlunoSchema])
 def boletim_do_aluno(controle: T_BoletimControle):
     """Lista todas as matérias que o aluno está cursando, incluindo notas e faltas"""
 
     # TODO: Pegar o id do usuário logado
-    id_aluno_atual = randint(3, 5)
+    id_aluno_atual = 3
     return controle.listar_boletim_aluno(id_aluno_atual)
 
 
