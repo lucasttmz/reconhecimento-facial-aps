@@ -1,8 +1,8 @@
 /********** CRIAR O ARQUIVO DO BANCO DE DADOS **************
  *                                                         *
  * -- cmd ou powershell --                                 *
- * C:\[...]\backend\sistema_escolar\dal\db> sqlite3 aps.db *
- * sqlite3> aps.db < init.sql                              *
+ * C:\...\backend\sistema_escolar\dal\db> sqlite3 aps.db   *
+ * sqlite3> .read init.sql                                 *
  *                                                         *
  ***********************************************************/
 
