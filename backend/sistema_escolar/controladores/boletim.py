@@ -1,40 +1,86 @@
-from datetime import datetime, timedelta
-from random import randint
+from sistema_escolar.modelos.boletim import (
+    BoletimParaAlunoSchema,
+    BoletimParaProfessorSchema,
+)
+from sistema_escolar.dal.boletim import BoletimDAO
+from fastapi import HTTPException
+from sistema_escolar.controladores.materias import MateriaControle
+from sistema_escolar.controladores.usuarios import UsuarioControle
 
-from sistema_escolar.modelos.boletim import BoletimParaAlunoSchema, BoletimParaProfessorSchema
-from sistema_escolar.modelos.usuario import TipoUsuario, UsuarioSchema
 
-
-class BoletimControle():
+class BoletimControle:
     def listar_boletim_aluno(self, id_aluno: int) -> list[BoletimParaAlunoSchema]:
-        id_materias_aluno = (1, 2, 3)
+        boletimDAO = BoletimDAO()
+        boletins = boletimDAO.buscar_todos_boletins_aluno(id_aluno)
 
-        return [self.listar_boletim_aluno_em_materia(id_aluno, materia) for materia in id_materias_aluno]
-    
-    def listar_boletim_aluno_em_materia(self, id_aluno: int, id_materia) -> BoletimParaAlunoSchema:
-        materia = {
-            "materia": {
-                "nome": f"Nome Matéria {id_materia}",
-                "professor": f"Prof. Matéria {id_materia}",
-                "data_inicio": datetime.now().date() - timedelta(days=randint(0, 10)),
-                "data_fim": datetime.now().date() + timedelta(days=randint(0, 10)),
-            },
-            "nota": randint(0, 10),
-            "faltas": randint(0, 5),
+        if boletins is None:
+            raise HTTPException(404)
+
+        resultado = []
+        for boletim in boletins:
+            materia = MateriaControle().listar_public_materia(boletim.id_materia)
+
+            boletim_schema = {
+                "materia": materia,
+                "nota": boletim.nota,
+                "faltas": boletim.faltas,
+            }
+            resultado.append(BoletimParaAlunoSchema(**boletim_schema))
+
+        return resultado
+
+    def listar_boletim_aluno_em_materia(
+        self, id_aluno: int, id_materia
+    ) -> BoletimParaAlunoSchema:
+        boletimDAO = BoletimDAO()
+        boletim = boletimDAO.buscar_boletim_do_aluno(id_aluno, id_materia)
+
+        if boletim is None:
+            raise HTTPException(404)
+
+        materia = MateriaControle().listar_public_materia(boletim.id_materia)
+        boletim_schema = {
+            "materia": materia,
+            "nota": boletim.nota,
+            "faltas": boletim.faltas,
         }
 
-        return BoletimParaAlunoSchema(**materia)
-    
-    def listar_boletim_para_professores(self, id_aluno: int, id_materia: int) -> BoletimParaProfessorSchema:
-        aluno = UsuarioSchema(codigo=f"AL_{id_aluno}", nome=f"Nome Aluno{id_aluno}", tipo=TipoUsuario.ALUNO)
+        return BoletimParaAlunoSchema(**boletim_schema)
+
+    def listar_boletim_para_professores(
+        self, id_aluno: int, id_materia: int
+    ) -> BoletimParaProfessorSchema:
+        aluno = UsuarioControle().listar_info_aluno(id_aluno)
         boletim = self.listar_boletim_aluno_em_materia(id_aluno, id_materia)
 
-        return BoletimParaProfessorSchema(aluno=aluno, faltas=boletim.faltas, nota=boletim.faltas, materia=boletim.materia)
+        return BoletimParaProfessorSchema(
+            aluno=aluno,
+            faltas=boletim.faltas,
+            nota=boletim.nota,
+            materia=boletim.materia,
+        )
 
-    # TODO
-    # Boletim
-    # Pesquisar Materias por Aluno (id_aluno) -> list[Materia]
-    # Pesquisar TODOS Alunos por materia (id_materia) -> list[Usuário]
-    # Pesquisar Boletim por materia (id_aluno, id_materia) -> Boletim
-    # Pesquisar TODOS Boletins por aluno (id_aluno) -> list[Boletim]
-    # Atualizar Boletim (id_boletim, AtualizarBoletimSchema) -> None
+    def listar_boletim_por_materia(
+        self, id_materia: int
+    ) -> list[BoletimParaProfessorSchema] | None:
+        boletimDAO = BoletimDAO()
+        boletins = boletimDAO.buscar_boletim_por_materia(id_materia)
+
+        if boletins is None:
+            return None
+
+        resultado = []
+        for boletim in boletins:
+            aluno = UsuarioControle().listar_info_aluno(boletim.id_usuario)
+            materia = MateriaControle().listar_materia(boletim.id_materia)
+
+            boletimSchema = {
+                "aluno": aluno,
+                "materia": materia,
+                "nota": boletim.nota,
+                "faltas": boletim.faltas,
+            }
+
+            resultado.append(BoletimParaProfessorSchema(**boletimSchema))
+
+        return resultado
