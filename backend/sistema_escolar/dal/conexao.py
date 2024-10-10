@@ -5,8 +5,8 @@ from enum import IntEnum
 import os
 import re
 
-# CAMINHO_DB = Path("backend\\sistema_escolar\\dal\\db\\aps.db") # Caminho relativo
-CAMINHO_DB = Path(os.path.join(os.getcwd(), "dal\\db\\aps.db")) # Caminho completo desde o C:\..\sistema_escolar\
+CAMINHO_DB = Path("sistema_escolar/dal/db/aps.db") # Caminho relativo
+# CAMINHO_DB = Path(os.path.join(os.getcwd(), "dal\\db\\aps.db")) # Caminho completo desde o C:\..\sistema_escolar\
 
 class TipoRetorno(IntEnum):
     FETCHONE = 1
@@ -14,12 +14,12 @@ class TipoRetorno(IntEnum):
 
 class Conexao:
     def __init__(self):
-        self.conn: Connection = None
+        self.conn: Connection | None = None
 
-    def iniciar(self) -> Cursor:
+    def iniciar(self) -> Connection:
         self.conn = connect(CAMINHO_DB)
         self.conn.row_factory = self.linha_para_dicionario
-        return self.conn.cursor()
+        return self.conn
 
     def fechar(self) -> None:
         if self.conn is not None:
@@ -41,43 +41,46 @@ class Conexao:
     def fetch_query(self, query: str, tipo_retorno: TipoRetorno = TipoRetorno.FETCHONE, mensagem_debug: str = "Erro") -> list[dict] | dict | None:
         stmt = self.limpar_query(query)
         resultado = None
+        cursor = None
 
         try:
-            cursor = self.iniciar()
-            result = cursor.execute(stmt)
+            with self.iniciar() as conn:
+                cursor = conn.cursor()
+                result = cursor.execute(stmt)
 
-            if tipo_retorno == TipoRetorno.FETCHONE:
-                resultado = result.fetchone()
-                
-            if tipo_retorno == TipoRetorno.FETCHALL:
-                resultado = []
-                for linha in result.fetchall():
-                    resultado.append(linha)
+                if tipo_retorno == TipoRetorno.FETCHONE:
+                    resultado = result.fetchone()
+                    
+                if tipo_retorno == TipoRetorno.FETCHALL:
+                    resultado = [linha for linha in result.fetchall()]
 
         except Exception as erro:
             print(f"{mensagem_debug}: {erro}")
 
         finally:
-            self.fechar()
-
-        print(resultado)
+            if cursor is not None:
+                cursor.close()
 
         return resultado
 
     def dml_query(self, query: str, mensagem_debug: str = "Erro") -> int:
         stmt = self.limpar_query(query)
         linhas_afetadas: int = 0
+        cursor = None
 
         try:
-            cursor = self.iniciar()
-            cursor.execute(stmt)
-            linhas_afetadas = cursor.rowcount
+            with self.iniciar() as conn:
+                cursor = conn.cursor()
+                cursor.execute(stmt)
+                linhas_afetadas = cursor.rowcount
+                conn.commit() 
 
         except Exception as erro:
             print(f"{mensagem_debug}: {erro}")
             linhas_afetadas = -1
 
         finally:
-            self.fechar()
+            if cursor is not None:
+                cursor.close()
 
         return linhas_afetadas
