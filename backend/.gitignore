@@ -5,3 +5,4 @@ __pycache__/
 scripts/img
 scripts/modelo.yml
 *.db
+.env

@@ -1,8 +1,10 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from sistema_escolar.rotas import boletim, materias, usuarios, autenticacao
 
+load_dotenv()
 
 app = FastAPI(title="Sistema Escolar")
 
