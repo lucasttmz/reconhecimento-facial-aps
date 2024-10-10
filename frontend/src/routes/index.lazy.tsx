@@ -1,5 +1,4 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
-import { Button } from '../components/ui/button'
 
 import { CameraDialog } from '../components/Dialogs/CameraDialog';
 import { InputDialog } from '../components/Dialogs/InputDialog';
@@ -22,16 +21,13 @@ function Index() {
       <div 
         className='flex flex-col gap-4 w-full'
       >
-        <CameraDialog
-          trigerTitle='Login'
-        />
+       
+          <CameraDialog
+            trigerTitle='Login'
+          />
 
-        <Button
-          variant='secondary'
-          className='outline-none ring-0 focus:ring-0 h-[45px] font-bold'
-        >
+        
           <InputDialog/>
-        </Button>
         
       </div>
     </section>

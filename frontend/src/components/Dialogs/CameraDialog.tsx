@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,8 @@ import { Button } from "../ui/button";
 import { Disc, LoaderCircle } from "lucide-react";
 import { CameraHook } from "../../hooks/CameraHook";
 import { makeRequestProps } from "../../api/axios";
+import { CONST } from "../../const/Index";
+import { useNavigate } from "@tanstack/react-router";
 
 interface CameraDialogProps {
   trigerTitle: string;
@@ -20,19 +22,24 @@ interface CameraDialogProps {
 }
 
 export const CameraDialog = ({ trigerTitle, onCaptureImages }: CameraDialogProps) => {
- 
+  const navigate = useNavigate({ from: '/' })
   const webcamRef = useRef<Webcam>(null);
   const videoConstraints = { facingMode: "user" };
-  let onCaptureImagesR: boolean = onCaptureImages ? true : false;
+  const onCaptureImagesR: boolean = onCaptureImages ? true : false;
+  const [openModal, setOpenModal] = useState<boolean>(false); 
+
+  const dataRequest = useCallback(async () => {
+    console.log('dataRequest');
+
+    await getPhotos();
+  }, []);
 
   const apiCall: makeRequestProps = {
-    method: 'GET',
-    path: 'autenticacao',
-    subpath: 'autenticar-usuario',
-    urlParams: [],
+    method: CONST.HTTP.POST,
+    path: 'login',
   }
   
-  const {authenticating, getPhotos, arrayImagens} = CameraHook({ webcamRef, apiCall, onCaptureImagesR});
+  const {authenticating, getPhotos, arrayImagens, responseData} = CameraHook({ webcamRef, apiCall, onCaptureImagesR});
   
   
   useEffect(() => {
@@ -41,6 +48,18 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages }: CameraDialogProps
     }
     
   }, [arrayImagens, onCaptureImages]);
+
+  useEffect(() => {
+    if (!responseData) return;
+
+    const { token } = responseData as { token: string, tipo: string };
+
+    if (token) {
+      localStorage.setItem('token', token);
+
+      navigate({ to: '/home' });
+    }
+  }, [responseData]);
   
   
   const statusButton: { [key: string]: boolean } = {
@@ -54,8 +73,12 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages }: CameraDialogProps
   };
 
   return (
-    <Dialog >
-      <DialogTrigger className="bg-slate-900 text-white p-2 rounded font-bold">{trigerTitle}</DialogTrigger>
+    <Dialog open={openModal || authenticating}>
+      <DialogTrigger 
+        className="bg-slate-900 text-white p-2 rounded font-bold"
+        onClick={() => setOpenModal(true)}
+      >{trigerTitle}
+      </DialogTrigger>
       <DialogContent className='px-10 max-w-[320px] rounded-xl'>
         <DialogHeader>
           {Object.keys(statusTitle).map((key) => (
@@ -82,7 +105,7 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages }: CameraDialogProps
         <DialogFooter className='flex items-center justify-center '>
           <Button
             className='bg-gray-800 w-fit'
-            onClick={()=> getPhotos()}
+            onClick={dataRequest}
           >
             {Object.keys(statusButton).map((key) => (
               statusButton[key] && (

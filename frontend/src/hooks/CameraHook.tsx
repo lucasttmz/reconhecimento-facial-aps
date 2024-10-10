@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { apiService } from "../api/api";
 import { makeRequestProps } from "../api/axios";
@@ -12,6 +12,7 @@ interface CameraHookProps {
 export const CameraHook = ({ webcamRef, apiCall, onCaptureImagesR}: CameraHookProps) => {
   const [arrayImagens, setArrayImagens] = useState<string[]>([]);
   const [authenticating, setAuthenticating] = useState<boolean>(false);
+  const [responseData, setResponseData] = useState<unknown>();
   const arrayImagensRef = useRef<string[]>([]);
 
   const getPhotos = async () => {
@@ -39,24 +40,31 @@ export const CameraHook = ({ webcamRef, apiCall, onCaptureImagesR}: CameraHookPr
       if(onCaptureImagesR){
         setAuthenticating(false)
       }
-      else{
-        console.log(arrayImagensRef.current); // Use the ref here
 
+      else{
         data = await apiService().makeRequest({
           ...apiCall,
-          urlParams: [1,10], // Use the ref here
+          body: {
+            fotos: arrayImagensRef.current,
+          },
         });
+
+        setResponseData(data);
       }
     }, 3000);
 
     return data
-    
   };
+
+  useEffect(() => {
+    console.log(arrayImagens);
+  }, [arrayImagens]);
 
 
   return {
     getPhotos,
     arrayImagens,
+    responseData,
     authenticating,
   }
 }
