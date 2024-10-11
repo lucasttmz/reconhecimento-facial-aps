@@ -7,17 +7,18 @@ from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jwt import encode, decode, DecodeError
 
-
-from sistema_escolar.modelos.autenticacao import RegistroSchema
+from sistema_escolar.controladores.biometria import BiometriaControle, USUARIO_NAO_RECONHECIDO
+from sistema_escolar.controladores.usuarios import UsuarioControle
+from sistema_escolar.modelos.autenticacao import RegistroSchema, Token
 from sistema_escolar.modelos.genericos import MensagemSchema
 
 
 CHAVE = environ.get("CHAVE_TOKEN", "seta la a chave")
 EXPIRACAO_MINUTOS = int(environ.get("EXPIRACAO_TOKEN", 180))
 
-Token = Annotated[HTTPAuthorizationCredentials, Depends(HTTPBearer())]
+T_Token = Annotated[HTTPAuthorizationCredentials, Depends(HTTPBearer())]
 
-def usuario_autenticado(token: Token):
+def usuario_autenticado(token: T_Token):
     return AutenticacaoControle.decodificar_token(token)
     
 
@@ -32,7 +33,7 @@ class AutenticacaoControle:
         return token_jwt
     
     @staticmethod
-    def decodificar_token(token: Token) -> dict:
+    def decodificar_token(token: T_Token) -> dict:
         exc_invalido = HTTPException(
             status_code=HTTPStatus.UNAUTHORIZED,
             detail="Token inválido ou expirado",
@@ -50,10 +51,21 @@ class AutenticacaoControle:
         except DecodeError:
             raise exc_invalido
 
-    def registrar_usuario(self, dados: RegistroSchema) -> MensagemSchema:
+    def registrar_usuario(self, dados: RegistroSchema, biometria: BiometriaControle) -> MensagemSchema:
         return MensagemSchema(mensagem="Registrado com sucesso!")
 
-    def realizar_login(self, fotos: list[str]): ...
+    def realizar_login(self, fotos: list[str], biometria: BiometriaControle) -> Token: 
+        id_usuario = biometria.realizar_biometria(fotos)
+        if id_usuario == USUARIO_NAO_RECONHECIDO:
+            raise HTTPException(
+                status_code=HTTPStatus.UNAUTHORIZED, 
+                detail="Login falhou. Tente novamente"
+            )
+        
+        # Cria o token com os dados do usuário reconhecido
+        usuario = UsuarioControle().listar_info_usuario(id_usuario)
+        dados = {"sub":usuario.nome, "user_id": id_usuario, "permissions": usuario.tipo}
 
-    def realizar_biometria(self, fotos: list[str]): ...
+        return Token(token=self.criar_token(dados), tipo="Bearer")
+        
 
