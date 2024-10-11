@@ -34,11 +34,11 @@ CREATE TABLE boletim (
 --Scripts para testes
 INSERT INTO usuario (id_usuario, codigo, nome, tipo)
 VALUES
+    (NULL, 'ALU123468', 'Vinicius', 1),
+    (NULL, 'ALU123457', 'Samuel', 1),
     (NULL, 'ADM123456', 'Josué', 3),
     (NULL, 'PRO123456', 'Lucas', 2),
     (NULL, 'ALU123456', 'Raul', 1),
-    (NULL, 'ALU123457', 'Samuel', 1),
-    (NULL, 'ALU123468', 'Vinicius', 1),
     (NULL, 'ALU123459', 'Wellington', 1);
 
 --Materias
