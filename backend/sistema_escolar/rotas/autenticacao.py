@@ -10,7 +10,7 @@ from sistema_escolar.modelos.autenticacao import LoginSchema, RegistroSchema, To
 from sistema_escolar.modelos.genericos import MensagemSchema
 
 
-MODO_DEBUG = bool(environ.get("DEBUG", False))
+MODO_DEV = environ.get("DEV", "false").lower() in ("true", "1")
 
 router = APIRouter(tags=["autenticacao"])
 T_AutenticacaoControle = Annotated[AutenticacaoControle, Depends(AutenticacaoControle)]
@@ -22,7 +22,7 @@ def login(dados: LoginSchema, autenticacao: T_AutenticacaoControle, biometria: T
     """Realiza login por meio do reconhecimento facial"""
 
     # Somente durante o desenvolvimento para não precisar do reconhecimento facial
-    if MODO_DEBUG:
+    if MODO_DEV:
         permissao = randint(1, 3)
         usuarios = ["Aluno", "Professor", "Diretor"]
         token = autenticacao.criar_token(dados={"sub": usuarios[permissao-1], "user_id":permissao+3, "permissions": permissao})
