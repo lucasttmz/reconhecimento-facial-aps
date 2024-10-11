@@ -35,9 +35,16 @@ export class api {
     }
 
     if (method === 'POST') {
-      const { data } = await this.api.post(path, body)
+      
+      try {
+          const data = await this.api.post(path, body)
     
-      return data
+          return data
+      } catch (error) {
+        
+        return {error: true}
+      }
+      
     }
 
     if (method === 'PUT') {
