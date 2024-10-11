@@ -7,7 +7,7 @@ import numpy as np
 
 
 CAMINHO_MODELO = "modelo.yml"
-CONFIANCA_MINIMA = 85
+CONFIANCA_MINIMA = 10
 QTD_VIZINHOS = 5
 TAMANHO_MINIMO = (75, 75)
 USUARIO_NAO_RECONHECIDO = 0
@@ -63,6 +63,7 @@ class BiometriaControle():
 
         # Checa se tem confiança suficiente no resultado
         confianca = 100 - distancia
+        print(f"CONFIANÇA: {confianca}")
         if confianca >= CONFIANCA_MINIMA:  
             return id_pessoa
         else:
@@ -70,6 +71,8 @@ class BiometriaControle():
 
 def decodificar_base64(imagem_base64: str):
     try:
+        if imagem_base64.startswith("data:image/jpeg;base64,"):
+            imagem_base64 = imagem_base64.split(",")[1]
         dados_imagem = base64.b64decode(imagem_base64)
         array = np.frombuffer(dados_imagem, dtype=np.uint8)
         imagem = cv2.imdecode(array, cv2.IMREAD_COLOR)
