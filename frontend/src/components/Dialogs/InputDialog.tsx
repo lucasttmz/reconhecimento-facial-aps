@@ -13,9 +13,9 @@ import {
 } from "../ui/dialog"
 import { CameraDialog } from "./CameraDialog";
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
-import { api,makeRequestProps } from "../../api/axios";
+import { makeRequestProps } from "../../api/axios";
 import { apiService } from "../../api/api";
+import { useToast } from "../../hooks/use-toast";
 interface paramsPost {
   nome: string,
   sobrenome: string,
@@ -23,7 +23,7 @@ interface paramsPost {
 }
 
 export const InputDialog = () => {
-
+  const { toast } = useToast()
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [buttonDisabled, setButtonDisabled] = useState<boolean>(true)
   const [params, setParams] = useState<paramsPost>({
@@ -32,10 +32,10 @@ export const InputDialog = () => {
     fotos: []
   }) 
   const apiCall:makeRequestProps = {
-    path: "/registrar",
+    path: "registrar",
     method: "POST",
-    params: {
-      nome: `${params.nome} ${params.sobrenome}`,
+    body: {
+      nome: `${params.nome} ${params.sobrenome}`.toLowerCase(),
       fotos: capturedImages
     }
   }
@@ -69,8 +69,24 @@ export const InputDialog = () => {
   }
   const apiPostService = async ()=>{
 
+
     const data = await apiService().makeRequest(apiCall)
-    console.log(data)
+    if(data.status == 200){
+      console.log(data)
+      toast({
+        title: "Okay",
+        description: 'Tudo certo para fazer login'
+      })
+    }
+    else{
+      toast({
+        title: "Opss...",
+        description: 'Algo deu errado',
+        variant: "destructive"
+      })
+
+      return;
+    }
   }
 
   return (
@@ -115,7 +131,7 @@ export const InputDialog = () => {
         </DialogHeader>
         <DialogFooter className="flex flex-col">
           <Button type="submit" disabled={buttonDisabled} onClick={apiPostService}>
-            <Link to="/" >Enviar</Link>
+            Enviar Cadastro
           </Button>
         </DialogFooter>
       </DialogContent>

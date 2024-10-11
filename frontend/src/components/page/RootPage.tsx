@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from "@tanstack/react-router";
 import { useUserStore } from "../../store/user";
 import Logo from '../../assets/images/logo.png'
 import { useEffect } from "react";
+import { Toaster } from "../ui/toaster"
 
 export const RootPage: React.FC = () => {
     const navigate = useNavigate({ from: '/' })
@@ -15,6 +16,8 @@ export const RootPage: React.FC = () => {
 
         return
       }
+
+      navigate({ to: '/' })
     }, [addUser, removeUser])
 
     return (
@@ -26,6 +29,8 @@ export const RootPage: React.FC = () => {
               />
           
             <Outlet/>
+            <Toaster/>
         </main>
+        
     );
 }

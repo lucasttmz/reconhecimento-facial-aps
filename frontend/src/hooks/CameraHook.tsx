@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { apiService } from "../api/api";
 import { makeRequestProps } from "../api/axios";
@@ -42,19 +42,29 @@ export const CameraHook = ({ webcamRef, apiCall, onCaptureImagesR}: CameraHookPr
       }
 
       else{
-        data = await apiService().makeRequest({
-          ...apiCall,
-          body: {
-            fotos: arrayImagensRef.current,
-          },
-        });
+        try {
+          data = await apiService().makeRequest({
+            ...apiCall,
+            body: {
+              fotos: arrayImagensRef.current,
+            },
+          });
+          
+          setResponseData(data);
+        } catch (error) {
+          setArrayImagens([])
+          setResponseData({ error: true });
+        }
 
-        setResponseData(data);
       }
     }, 3000);
 
     return data
   };
+
+  const toggleIsAuthenticating = useCallback(() => {
+    setAuthenticating(prev => !prev)
+  }, [authenticating])
 
   useEffect(() => {
     console.log(arrayImagens);
@@ -64,6 +74,7 @@ export const CameraHook = ({ webcamRef, apiCall, onCaptureImagesR}: CameraHookPr
   return {
     getPhotos,
     arrayImagens,
+    toggleIsAuthenticating,
     responseData,
     authenticating,
   }

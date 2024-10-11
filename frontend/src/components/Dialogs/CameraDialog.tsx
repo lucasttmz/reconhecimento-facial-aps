@@ -15,6 +15,8 @@ import { CameraHook } from "../../hooks/CameraHook";
 import { makeRequestProps } from "../../api/axios";
 import { CONST } from "../../const/Index";
 import { useNavigate } from "@tanstack/react-router";
+import { useUserStore } from "../../store/user";
+import { useToast } from "../../hooks/use-toast";
 
 interface CameraDialogProps {
   trigerTitle: string;
@@ -26,11 +28,9 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages }: CameraDialogProps
   const webcamRef = useRef<Webcam>(null);
   const videoConstraints = { facingMode: "user" };
   const onCaptureImagesR: boolean = onCaptureImages ? true : false;
-  const [openModal, setOpenModal] = useState<boolean>(false); 
-
+  const { actions: { addUser } } = useUserStore()
+  const { toast } = useToast()
   const dataRequest = useCallback(async () => {
-    console.log('dataRequest');
-
     await getPhotos();
   }, []);
 
@@ -39,7 +39,7 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages }: CameraDialogProps
     path: 'login',
   }
   
-  const {authenticating, getPhotos, arrayImagens, responseData} = CameraHook({ webcamRef, apiCall, onCaptureImagesR});
+  const {authenticating, toggleIsAuthenticating, getPhotos, arrayImagens, responseData} = CameraHook({ webcamRef, apiCall, onCaptureImagesR});
   
   
   useEffect(() => {
@@ -50,12 +50,26 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages }: CameraDialogProps
   }, [arrayImagens, onCaptureImages]);
 
   useEffect(() => {
-    if (!responseData) return;
+    if(!responseData) return
+    if (responseData?.error as unknown) {
+      toggleIsAuthenticating()
+      toast({
+        title: "Oops...",
+        description: 'Algo deu errado',
+        variant: "destructive"
+      })
 
-    const { token } = responseData as { token: string, tipo: string };
+      console.log('caiu aqui')
+      return;
+    }
+    
+    console.log(responseData)
+    const { data } = responseData as { data: { token: string, tipo: string, message: string } };
 
-    if (token) {
-      localStorage.setItem('token', token);
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+
+      addUser(data.token)
 
       navigate({ to: '/home' });
     }
@@ -73,10 +87,9 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages }: CameraDialogProps
   };
 
   return (
-    <Dialog open={openModal || authenticating}>
+    <Dialog>
       <DialogTrigger 
         className="bg-slate-900 text-white p-2 rounded font-bold"
-        onClick={() => setOpenModal(true)}
       >{trigerTitle}
       </DialogTrigger>
       <DialogContent className='px-10 max-w-[320px] rounded-xl'>
