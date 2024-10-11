@@ -22,18 +22,28 @@ def carregar_imagens_do_treinamento(diretorio):
 
         nomes[id_atual] = subdir
         for caminho_imagem in os.listdir(caminho_dir):
+            # Utilizar foto 5.jpg de cada pessoa como teste
+            if caminho_imagem[0] == '5':
+                continue
+
             caminho_completo = os.path.join(caminho_dir, caminho_imagem)
             imagem = cv2.imread(caminho_completo)
 
             escala_cinza = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
             rostos = haarcascades.detectMultiScale(escala_cinza, minSize=TAMANHO_MINIMO)
 
-            # Linha e coluna no NumPy invertidos
-            for (coluna, linha, largura, altura) in rostos:
-                rosto = escala_cinza[linha:linha+altura, coluna:coluna+largura]
-                
-                imagens.append(rosto)
-                ids.append(id_atual)
+            if len(rostos) == 0:
+                print(f"Nenhum rosto detectado para {nomes[id_atual]}!")
+                continue
+
+            # Encontrar o maior rosto com base na área (largura * altura)
+            maior_rosto = max(rostos, key=lambda r: r[2] * r[3])
+
+            (coluna, linha, largura, altura) = maior_rosto
+            rosto = escala_cinza[linha:linha+altura, coluna:coluna+largura]
+
+            imagens.append(rosto)
+            ids.append(id_atual)
         
         id_atual += 1
 
