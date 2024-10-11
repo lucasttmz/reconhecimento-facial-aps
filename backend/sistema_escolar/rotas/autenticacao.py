@@ -1,65 +1,43 @@
-from datetime import datetime, timedelta
-from http import HTTPStatus
 from os import environ
 from random import randint
+from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jwt import encode, decode, DecodeError
+from fastapi import APIRouter, Depends
 
+from sistema_escolar.controladores.autenticacao import AutenticacaoControle, usuario_autenticado
 from sistema_escolar.modelos.autenticacao import LoginSchema, RegistroSchema, Token
 from sistema_escolar.modelos.genericos import MensagemSchema
 
 
-SECRET_KEY = environ.get("SECRET_KEY", "123")
-EXPIRACAO_TOKEN_MIN = 60
+MODO_DEBUG = bool(environ.get("DEBUG", False))
 
-jwt_token = HTTPBearer()
 router = APIRouter(tags=["autenticacao"])
-
-
-def usuario_logado(token: HTTPAuthorizationCredentials = Depends(jwt_token)):
-    exc_invalido = HTTPException(
-        status_code=HTTPStatus.UNAUTHORIZED,
-        detail="Token inválido ou expirado",
-    )
-
-    try:
-        payload = decode(token.credentials, SECRET_KEY, algorithms=["HS256"])
-        nome = payload.get("sub")
-        id_usuario = payload.get("user_id")
-        permissoes = payload.get("permissions")
-        if not nome or not permissoes or not id_usuario:
-            raise exc_invalido
-    
-        return {"id": id_usuario, "nome": nome, "permissoes": permissoes}
-    except DecodeError:
-        raise exc_invalido
-
-
-def criar_token(dados: dict):
-    copia_dados = dados.copy()
-    expiracao = datetime.utcnow() + timedelta(
-        minutes=EXPIRACAO_TOKEN_MIN
-    )
-    copia_dados.update({"exp": expiracao})
-    token_jwt = encode(copia_dados, SECRET_KEY)
-    return token_jwt
-
+T_AutenticacaoControle = Annotated[AutenticacaoControle, Depends(AutenticacaoControle)]
+T_Usuario = Annotated[dict[str, Any], Depends(usuario_autenticado)]
 
 @router.post("/login", response_model=Token)
-def login(fotos: LoginSchema):
-    permissao = randint(1, 3)
-    usuarios = ["Lucas", "Raul", "Samuel"]
-    token = criar_token(dados={"sub": usuarios[permissao-1], "user_id":permissao+10, "permissions": permissao})
-    return {"token": token, "tipo": "Bearer"}
+def login(dados: LoginSchema, controle: T_AutenticacaoControle):
+    """Realiza login por meio do reconhecimento facial"""
+
+    # Somente durante o desenvolvimento para não precisar do reconhecimento facial
+    if MODO_DEBUG:
+        permissao = randint(1, 3)
+        usuarios = ["Aluno", "Professor", "Diretor"]
+        token = controle.criar_token(dados={"sub": usuarios[permissao-1], "user_id":permissao+3, "permissions": permissao})
+        return {"token": token, "tipo": "Bearer"}
+
+    return controle.realizar_login(dados.fotos)
 
 
-@router.post("/registrar")
-def registrar(dados: RegistroSchema):
-    return MensagemSchema(mensagem="Registrado com sucesso!")
+@router.post("/registrar", response_model=MensagemSchema)
+def registrar(dados: RegistroSchema, controle: T_AutenticacaoControle):
+    """Registra um novo usuário"""
+
+    return controle.registrar_usuario(dados)
 
 
 @router.get("/protegida")
-def rota_protegida_testes(usuario: dict = Depends(usuario_logado)):
+def rota_protegida_testes(usuario: T_Usuario):
+    """Testes temporários"""
+
     return {"message": "Acesso permitido", "usuario": usuario}
