@@ -32,15 +32,14 @@ CREATE TABLE boletim (
 );
 
 --Scripts para testes
---Usuarios
 INSERT INTO usuario (id_usuario, codigo, nome, tipo)
 VALUES
-    (NULL, 'ADM123456', 'João da Silva', 3),
-    (NULL, 'PRO123456', 'Maria Pereira', 2),
-    (NULL, 'ALU123456', 'Pedro Santos', 1),
-    (NULL, 'ALU123457', 'Ana Souza', 1),
-    (NULL, 'ALU123468', 'Carlos Oliveira', 1),
-    (NULL, 'ALU123459', 'Fernanda Gomes', 1);
+    (NULL, 'ADM123456', 'Josué', 3),
+    (NULL, 'PRO123456', 'Lucas', 2),
+    (NULL, 'ALU123456', 'Raul', 1),
+    (NULL, 'ALU123457', 'Samuel', 1),
+    (NULL, 'ALU123468', 'Vinicius', 1),
+    (NULL, 'ALU123459', 'Wellington', 1);
 
 --Materias
 INSERT INTO materia (id_materia, nome, id_professor, data_inicio, data_fim)

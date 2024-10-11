@@ -7,9 +7,9 @@ TAMANHO_MINIMO = (100, 100)
 
 def carregar_imagens_do_treinamento(diretorio):
     imagens = []
-    ids = [] # [0, 0, 0, 1, 1, 1]
+    ids = [] # [1, 1, 1, 2, 2, 2, ...]
     nomes = {}
-    id_atual = 0
+    id_atual = 1
 
     haarcascades = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml') # type: ignore
 

@@ -4,7 +4,7 @@ import cv2
 QTD_VIZINHOS = 5
 TAMANHO_MINIMO = (75, 75)
 CONFIANCA_MINIMA = 85
-NOMES = {0: 'Josue', 1: 'Lucas', 2: 'Raul', 3: 'Samuel', 4: 'Vinicius'}
+NOMES = {1: 'Josue', 2: 'Lucas', 3: 'Raul', 4: 'Samuel', 5: 'Vinicius'}
 
 
 def reconhecimento_facial(imagem_colorida):

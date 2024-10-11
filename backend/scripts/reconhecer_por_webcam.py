@@ -9,7 +9,7 @@ haar_cascades = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_front
 lbph = cv2.face.LBPHFaceRecognizer_create() #type: ignore
 lbph.read("modelo.yml")
 
-nomes = {0: 'Josue', 1: 'Lucas', 2: 'Raul', 3: 'Samuel', 4: 'Vinicius'}
+NOMES = {1: 'Josue', 2: 'Lucas', 3: 'Raul', 4: 'Samuel', 5: 'Vinicius'}
 
 webcam = cv2.VideoCapture(0)
 
@@ -30,7 +30,7 @@ while True:
 
         # TODO: Prefirivel falhar do que reconhecer errado, achar um valor bom
         if confianca < LIMITE_CONFIANCA:  # Quanto menor o valor, maior a confiança
-            nome = nomes.get(id_pessoa, "Desconhecido")
+            nome = NOMES.get(id_pessoa, "Desconhecido")
             cv2.putText(frame, f"{nome} {confianca}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         else:
