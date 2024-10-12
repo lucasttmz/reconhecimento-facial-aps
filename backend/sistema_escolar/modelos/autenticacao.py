@@ -13,3 +13,9 @@ class RegistroSchema(BaseModel):
 class Token(BaseModel):
     token: str
     tipo: str
+
+
+class UsuarioToken(BaseModel):
+    sub: str
+    user_id: int
+    permissions: int

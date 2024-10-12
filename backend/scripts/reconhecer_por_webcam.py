@@ -3,19 +3,19 @@ import cv2
 
 QTD_VIZINHOS = 5
 TAMANHO_MINIMO = (75, 75)
-LIMITE_CONFIANCA = 50 # 30 parece funcionar bem
+LIMITE_CONFIANCA = 80 # 30 parece funcionar bem
 
 haar_cascades = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml") # type: ignore
 lbph = cv2.face.LBPHFaceRecognizer_create() #type: ignore
 lbph.read("modelo.yml")
 
-nomes = {0: "Lucas", 1: "Outro"}
+NOMES = {1: 'Vinicius', 2: 'Samuel', 3: 'Josué', 4: 'Lucas', 5: 'Raul'}
 
 webcam = cv2.VideoCapture(0)
 
 while True:
-    acessou_webcam, frame = webcam.read()  # Le o frame da webcam
-    if not acessou_webcam:
+    sucesso, frame = webcam.read()  # Le o frame da webcam
+    if not sucesso:
         print("Falha ao capturar imagem")
         break
 
@@ -30,7 +30,7 @@ while True:
 
         # TODO: Prefirivel falhar do que reconhecer errado, achar um valor bom
         if confianca < LIMITE_CONFIANCA:  # Quanto menor o valor, maior a confiança
-            nome = nomes.get(id_pessoa, "Desconhecido")
+            nome = NOMES.get(id_pessoa, "Desconhecido")
             cv2.putText(frame, f"{nome} {confianca}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         else:

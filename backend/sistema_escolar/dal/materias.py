@@ -98,7 +98,7 @@ class MateriaDAO:
             WHERE id_materia = {id_materia}
         """
 
-        if not con.dml_query(query, checar_alteracao=True):
+        if not con.dml_query(query):
             return 0
 
         return id_materia

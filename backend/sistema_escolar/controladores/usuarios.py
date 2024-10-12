@@ -66,6 +66,21 @@ class UsuarioControle:
         }
 
         return UsuarioSchema(**usuarioSchema)
+    
+    def listar_info_usuario(self, id_usuario: int) -> UsuarioSchema:
+        usuarioDAO = UsuarioDAO()
+        usuario = usuarioDAO.buscar_usuario_por_id(id_usuario)
+
+        if usuario is None:
+            raise HTTPException(404)
+
+        usuarioSchema = {
+            "codigo": usuario.codigo,
+            "nome": usuario.nome,
+            "tipo": usuario.tipo,
+        }
+
+        return UsuarioSchema(**usuarioSchema)
 
     def criar_usuario(self, nome_usuario: UsuarioSchema): ...
 
