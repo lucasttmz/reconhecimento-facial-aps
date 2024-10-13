@@ -14,6 +14,7 @@ class Materia(BaseModel):
 
 
 class MateriaSchema(BaseModel):
+    id_materia: int
     nome: str
     professor: UsuarioSchema
     data_inicio: date
@@ -31,7 +32,7 @@ class CriarAtualizarMateriaSchema(BaseModel):
 
 class MateriaPublicSchema(BaseModel):
     """Matéria sem os dados do professor e alunos"""
-
+    id_materia: int
     nome: str
     professor: str
     data_inicio: date

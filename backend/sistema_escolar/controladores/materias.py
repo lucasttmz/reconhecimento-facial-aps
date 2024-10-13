@@ -22,6 +22,7 @@ class MateriaControle:
             professor = UsuarioControle().listar_info_professor(materia.id_professor)
 
             materia_schema = {
+                "id_materia": materia.id_materia,
                 "nome": materia.nome,
                 "professor": professor,
                 "data_inicio": materia.data_inicio,
@@ -43,6 +44,7 @@ class MateriaControle:
         professor = UsuarioControle().listar_info_professor(materia.id_professor)
 
         materia_schema = {
+            "id_materia": materia.id_materia,
             "nome": materia.nome,
             "professor": professor,
             "data_inicio": materia.data_inicio,
@@ -62,6 +64,7 @@ class MateriaControle:
         professor = UsuarioControle().listar_info_professor(materia.id_professor)
 
         materia_public = {
+            "id_materia": materia.id_materia,
             "nome": materia.nome,
             "professor": professor.nome,
             "data_inicio": materia.data_inicio,

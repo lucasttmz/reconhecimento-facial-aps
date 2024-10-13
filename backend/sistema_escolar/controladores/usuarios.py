@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 
-from sistema_escolar.modelos.usuario import UsuarioSchema
+from sistema_escolar.modelos.usuario import UsuarioSchema, AtualizarUsuarioSchema
 from sistema_escolar.dal.usuarios import UsuarioDAO
 
 
@@ -15,6 +15,7 @@ class UsuarioControle:
         resultado = []
         for aluno in alunos:
             usuarioSchema = {
+                "id_usuario": aluno.id_usuario,
                 "codigo": aluno.codigo,
                 "nome": aluno.nome,
                 "tipo": aluno.tipo,
@@ -30,7 +31,12 @@ class UsuarioControle:
         if aluno is None:
             raise HTTPException(404)
 
-        usuarioSchema = {"codigo": aluno.codigo, "nome": aluno.nome, "tipo": aluno.tipo}
+        usuarioSchema = {
+            "id_usuario": aluno.id_usuario,
+            "codigo": aluno.codigo, 
+            "nome": aluno.nome, 
+            "tipo": aluno.tipo
+        }
 
         return UsuarioSchema(**usuarioSchema)
 
@@ -44,6 +50,7 @@ class UsuarioControle:
         resultado: list[UsuarioSchema] = []
         for professor in professores:
             usuarioSchema = {
+                "id_usuario": professor.id_usuario,
                 "codigo": professor.codigo,
                 "nome": professor.nome,
                 "tipo": professor.tipo,
@@ -60,6 +67,7 @@ class UsuarioControle:
             raise HTTPException(404)
 
         usuarioSchema = {
+            "id_usuario": professor.id_usuario,
             "codigo": professor.codigo,
             "nome": professor.nome,
             "tipo": professor.tipo,
@@ -75,6 +83,7 @@ class UsuarioControle:
             raise HTTPException(404)
 
         usuarioSchema = {
+            "id_usuario": usuario.id_usuario,
             "codigo": usuario.codigo,
             "nome": usuario.nome,
             "tipo": usuario.tipo,
@@ -84,4 +93,4 @@ class UsuarioControle:
 
     def criar_usuario(self, nome_usuario: UsuarioSchema): ...
 
-    def atualizar_usuario(self, id: int, usuario_atualizado: UsuarioSchema): ...
+    def atualizar_usuario(self, id: int, usuario_atualizado: AtualizarUsuarioSchema): ...

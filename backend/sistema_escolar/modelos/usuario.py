@@ -13,10 +13,15 @@ class Usuario(BaseModel):
     id_usuario: int
     codigo: str
     nome: str
-    tipo: TipoUsuario
+    tipo: int
 
 
 class UsuarioSchema(BaseModel):
+    id_usuario: int
     codigo: str
     nome: str
+    tipo: TipoUsuario
+
+
+class AtualizarUsuarioSchema(BaseModel):
     tipo: TipoUsuario
