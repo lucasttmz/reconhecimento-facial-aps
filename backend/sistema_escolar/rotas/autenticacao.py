@@ -2,7 +2,7 @@ from os import environ
 from random import randint
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from sistema_escolar.controladores.autenticacao import AutenticacaoControle, usuario_autenticado
 from sistema_escolar.controladores.biometria import BiometriaControle
@@ -34,6 +34,12 @@ def login(dados: LoginSchema, autenticacao: T_AutenticacaoControle, biometria: T
 @router.post("/registrar", response_model=MensagemSchema)
 def registrar(dados: RegistroSchema, controle: T_AutenticacaoControle, biometria: T_BiometriaControle):
     """Registra um novo usuário"""
+
+    # Somente durante o desenvolvimento para não precisar do reconhecimento facial
+    if MODO_DEV:
+        falhar = randint(0, 1)
+        if falhar:
+            raise HTTPException(status_code=422, detail="Nenhum rosto encontrado na imagem")
 
     return controle.registrar_usuario(dados, biometria)
 
