@@ -2,6 +2,8 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { Check } from "lucide-react"
+
+
 import {
   Dialog,
   DialogContent,
@@ -68,7 +70,6 @@ export const InputDialog = () => {
   
   }
   const apiPostService = async ()=>{
-
 
     const data = await apiService().makeRequest(apiCall)
     if(data.status == 200){
@@ -138,25 +139,3 @@ export const InputDialog = () => {
     </Dialog>
   )
 }
-
-/*
-<div>
-  {capturedImages.length > 0 && (
-    <div className="mt-4">
-      <h4>Imagens Capturadas:</h4>
-      <div className="flex flex-wrap gap-4 w-full">
-        {capturedImages.map((image, index) => (
-          <img
-            key={index}
-            src={image}
-            alt={`captured-${index}`}
-            width={70}
-            height={70}
-            className="mt-2"
-          />
-        ))}
-      </div>
-    </div>
-  )}
-</div>
-*/

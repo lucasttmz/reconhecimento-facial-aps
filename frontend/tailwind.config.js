@@ -13,6 +13,7 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+			bgbutton: '#2b3d89',
 			blueLogo: '#06A2E0',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
