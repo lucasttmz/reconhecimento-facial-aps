@@ -55,7 +55,7 @@ function Home() {
 
                 <div className=''>
                   <ButtonMenu nome='Matéria' Icone={()=> <Book color='#fff'/>} rota='materias'/>
-                  <ButtonMenu nome='Aluno' Icone={()=> <GraduationCap color='#fff'/>} rota='aluno'/>
+                  <ButtonMenu nome='Alunos' Icone={()=> <GraduationCap color='#fff'/>} rota='alunos'/>
                 </div>
 
             )
@@ -65,8 +65,8 @@ function Home() {
 
               <div className=''>
                 <ButtonMenu nome='Matéria' Icone={()=> <Book color='#fff'/>} rota='materias'/>
-                <ButtonMenu nome='Aluno' Icone={()=> <GraduationCap color='#fff'/>} rota='aluno'/>
-                <ButtonMenu nome='Professores' Icone={()=> <User color='#fff'/>} rota='aluno'/>
+                <ButtonMenu nome='Alunos' Icone={()=> <GraduationCap color='#fff'/>} rota='alunos'/>
+                <ButtonMenu nome='Professores' Icone={()=> <User color='#fff'/>} rota='professores'/>
               </div>
             )
           }

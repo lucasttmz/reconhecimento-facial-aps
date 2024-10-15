@@ -11,6 +11,7 @@ import {
     TableRow,
 } from "../components/ui/table"
 import { useEffect, useState } from 'react';
+import { CONST } from '../const/Index';
 
 export const Route = createLazyFileRoute('/materias')({
     component: Materias,
@@ -18,37 +19,36 @@ export const Route = createLazyFileRoute('/materias')({
 
 function Materias() {
 
-    const [materias, setMaterias] = useState<materiasList>()
+    const [materias, setMaterias] = useState<materias[]>()
     const [carregando, setCarregando] = useState(true);
+    const [response, setResponse] = useState<unknown>()
 
     const apiParams: makeRequestProps = {
-        method: 'GET',
+        method: CONST.HTTP.GET,
         path: 'materias',
     }
+    const getAllMaterias = async () => {
 
+        try {
+            const data = await apiService().makeRequest(apiParams)
+            setMaterias(data)
+            return data 
+        }
+        catch (err) {
 
-
+            console.log(err)
+        }
+        finally {
+            setCarregando(false);
+        }
+    }
 
     useEffect(() => {
 
-        const call = async () => {
+        getAllMaterias()
 
-            try {
-
-                const data = await apiService().makeRequest(apiParams)
-                console.log(data)
-                setMaterias(data)
-            }
-            catch (err) {
-                console.log(err)
-            }
-            finally {
-                setCarregando(false);
-            }
-        }
-
-        call()
     }, [])
+
 
 
     return (
@@ -57,7 +57,7 @@ function Materias() {
                 <TableCaption>Lista de Materias</TableCaption>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="w-[100px]">Nome Materia</TableHead>
+                        <TableHead className="w-[100px] text-center">Nome Materia</TableHead>
                         <TableHead>Nome Professor</TableHead>
                         <TableHead>Data Inicio</TableHead>
                         <TableHead>Data Fim</TableHead>
@@ -66,24 +66,26 @@ function Materias() {
                 </TableHeader>
                 <TableBody>
 
-                    {carregando ? (
-                        <p>Carregando...</p>
-                    ) : (
-                        // Verifica se materias e materias.materias estão definidos
-                        materias && materias.materias ? (
-                            materias.materias.map((materia) => (
-                                <TableRow key={materia.id_materia}>
-                                    <TableCell>{materia.nome}</TableCell>
-                                    <TableCell>{materia.professor.nome}</TableCell>
-                                    <TableCell>{materia.data_inicio}</TableCell>
-                                    <TableCell>{materia.data_fim}</TableCell>
-                                    <TableCell>{materia.alunos.length}</TableCell>
-                                </TableRow>
-                            ))
+                    {
+                        carregando ? (
+                            <p>Carregado</p>
                         ) : (
-                            <p>Nenhuma matéria encontrada.</p>
+
+                            materias?.length ? (
+                                materias.map((materia) => (
+                                    <TableRow key={materia.id_materia}>
+                                        <TableCell>{materia.nome}</TableCell>
+                                        <TableCell>{materia.professor.nome}</TableCell>
+                                        <TableCell>{materia.data_inicio}</TableCell>
+                                        <TableCell>{materia.data_fim}</TableCell>
+                                        <TableCell>{materia.alunos.length}</TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <p></p>
+                            )
                         )
-                    )}
+                    }
                 </TableBody>
             </Table>
         </div>
@@ -104,9 +106,6 @@ interface materias {
     data_fim: string
     alunos: aluno[]
 
-}
-interface materiasList {
-    materias: materias[]
 }
 interface aluno {
     id_usuario: number,

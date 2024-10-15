@@ -29,9 +29,16 @@ export class api {
     if (subpath) url += `/${subpath}`
 
     if (method === 'GET') {
-      const { data } = await this.api.get(url)
-
-      return data;
+      
+      try {
+        const {data} = await this.api.get(url)
+        
+        return data;
+      
+      } catch (error) {
+        
+        return {error: true}
+      }
     }
 
     if (method === 'POST') {
