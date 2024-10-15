@@ -1,7 +1,10 @@
-import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
+import { createLazyFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useUserStore } from '../store/user'
 import { CONST } from '../const/Index';
 import { Button } from '../components/ui/button';
+import { ButtonMenu } from '../components/ButtonMenu';
+import { Book, GraduationCap, User, BookOpen } from "lucide-react"
+
 
 export const Route = createLazyFileRoute('/home')({
   component: Home,
@@ -40,9 +43,35 @@ function Home() {
           Vocé é um {roleUser}!
         </p>
 
-        <pre>
-          { JSON.stringify(permissions, null, 2) }
-        </pre>
+        <div >
+          
+          {
+            user?.permissions == 1 && (
+              <ButtonMenu nome='Boletim' Icone={()=> <BookOpen color='#fff'/>} rota='aluno'/>
+            )
+          }
+          {
+            user?.permissions == 2 && (
+
+                <div className=''>
+                  <ButtonMenu nome='Matéria' Icone={()=> <Book color='#fff'/>} rota='materias'/>
+                  <ButtonMenu nome='Aluno' Icone={()=> <GraduationCap color='#fff'/>} rota='aluno'/>
+                </div>
+
+            )
+          }
+          {
+            user?.permissions == 3 && (
+
+              <div className=''>
+                <ButtonMenu nome='Matéria' Icone={()=> <Book color='#fff'/>} rota='materias'/>
+                <ButtonMenu nome='Aluno' Icone={()=> <GraduationCap color='#fff'/>} rota='aluno'/>
+                <ButtonMenu nome='Professores' Icone={()=> <User color='#fff'/>} rota='aluno'/>
+              </div>
+            )
+          }
+
+        </div>
 
         <Button onClick={test}>
           Deslogar

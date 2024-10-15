@@ -16,10 +16,16 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
+const MateriasLazyImport = createFileRoute('/materias')()
 const HomeLazyImport = createFileRoute('/home')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const MateriasLazyRoute = MateriasLazyImport.update({
+  path: '/materias',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/materias.lazy').then((d) => d.Route))
 
 const HomeLazyRoute = HomeLazyImport.update({
   path: '/home',
@@ -49,6 +55,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeLazyImport
       parentRoute: typeof rootRoute
     }
+    '/materias': {
+      id: '/materias'
+      path: '/materias'
+      fullPath: '/materias'
+      preLoaderRoute: typeof MateriasLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -57,36 +70,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/home': typeof HomeLazyRoute
+  '/materias': typeof MateriasLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/home': typeof HomeLazyRoute
+  '/materias': typeof MateriasLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/home': typeof HomeLazyRoute
+  '/materias': typeof MateriasLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home'
+  fullPaths: '/' | '/home' | '/materias'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home'
-  id: '__root__' | '/' | '/home'
+  to: '/' | '/home' | '/materias'
+  id: '__root__' | '/' | '/home' | '/materias'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   HomeLazyRoute: typeof HomeLazyRoute
+  MateriasLazyRoute: typeof MateriasLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   HomeLazyRoute: HomeLazyRoute,
+  MateriasLazyRoute: MateriasLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -102,7 +120,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/home"
+        "/home",
+        "/materias"
       ]
     },
     "/": {
@@ -110,6 +129,9 @@ export const routeTree = rootRoute
     },
     "/home": {
       "filePath": "home.lazy.tsx"
+    },
+    "/materias": {
+      "filePath": "materias.lazy.tsx"
     }
   }
 }
