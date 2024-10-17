@@ -91,21 +91,23 @@ class BiometriaControle():
     
         # Se existir, atualizar modelo, senão cria ele
         if Path(CAMINHO_MODELO).exists():
-            self.criar_modelo_lbph(rostos, id_usuario)
-        else:
             self.atualizar_modelo_lbph(rostos, id_usuario)
+        else:
+            self.criar_modelo_lbph(rostos, id_usuario)
         
         return id_usuario
 
     def criar_modelo_lbph(self, rostos, id_pessoa: int):
         lbph = cv2.face.LBPHFaceRecognizer_create() # type: ignore
-        lbph.train(rostos, id_pessoa)
+        ids = np.array([id_pessoa] * len(rostos))
+        lbph.train(rostos, ids)
         lbph.save(CAMINHO_MODELO)
 
     def atualizar_modelo_lbph(self, rostos, id_pessoa: int):
         lbph = cv2.face.LBPHFaceRecognizer_create() # type: ignore
+        ids = np.array([id_pessoa] * len(rostos))
         lbph.read(CAMINHO_MODELO)
-        lbph.update(rostos, id_pessoa)
+        lbph.update(rostos, ids)
         lbph.save(CAMINHO_MODELO)
     
 
