@@ -23,6 +23,10 @@ class BiometriaControle():
                 detail="Nenhuma foto enviada para autenticação"
             )
         
+        # Modelo não existe (nenhum usuário esta cadastrado)
+        if not Path(CAMINHO_MODELO).exists():
+            return USUARIO_NAO_RECONHECIDO
+
         # Tenta autenticar com cada imagem enviada
         for foto in fotos:
             imagem = decodificar_base64(foto)
@@ -69,7 +73,7 @@ class BiometriaControle():
         if confianca >= CONFIANCA_MINIMA:  
             return id_pessoa
         else:
-            return 0
+            return USUARIO_NAO_RECONHECIDO
         
     def registrar_rosto(self, fotos: list[str], id_usuario: int) -> int:
         # Separa os rostos para o treinamento
