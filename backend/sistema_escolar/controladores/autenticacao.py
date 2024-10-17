@@ -47,12 +47,17 @@ class AutenticacaoControle:
             if not nome or not permissoes or not id_usuario:
                 raise exc_invalido
         
-            return {"id": id_usuario, "nome": nome, "permissoes": permissoes}
         except DecodeError:
             raise exc_invalido
+        
+        return {"id": id_usuario, "nome": nome, "permissoes": permissoes}
 
-    def registrar_usuario(self, dados: RegistroSchema, biometria: BiometriaControle) -> MensagemSchema:
-        return MensagemSchema(mensagem="Registrado com sucesso!")
+    def registrar_usuario(self, dados: RegistroSchema, biometria_controle: BiometriaControle) -> MensagemSchema:
+        usuario_controle = UsuarioControle()
+        proximo_id = usuario_controle.sequencia_usuario() + 1
+        biometria_controle.registrar_rosto(dados.fotos, proximo_id)
+
+        return usuario_controle.criar_usuario(proximo_id, dados.nome)
 
     def realizar_login(self, fotos: list[str], biometria: BiometriaControle) -> Token: 
         id_usuario = biometria.realizar_biometria(fotos)
@@ -67,5 +72,3 @@ class AutenticacaoControle:
         dados = {"sub":usuario.nome, "user_id": id_usuario, "permissions": usuario.tipo}
 
         return Token(token=self.criar_token(dados), tipo="Bearer")
-        
-

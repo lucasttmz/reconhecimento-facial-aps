@@ -1,5 +1,6 @@
 import base64
 from http import HTTPStatus
+from pathlib import Path
 
 import cv2
 from fastapi import HTTPException
@@ -11,13 +12,14 @@ CONFIANCA_MINIMA = 10
 QTD_VIZINHOS = 5
 TAMANHO_MINIMO = (75, 75)
 USUARIO_NAO_RECONHECIDO = 0
+QTD_MINIMA_TREINAMENTO = 10
 
 class BiometriaControle():
     def realizar_biometria(self, fotos: list[str]) -> int:
         # Se nenhuma foto foi enviada (algo errado no front)
         if not fotos:
             raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
+                status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
                 detail="Nenhuma foto enviada para autenticação"
             )
         
@@ -68,6 +70,44 @@ class BiometriaControle():
             return id_pessoa
         else:
             return 0
+        
+    def registrar_rosto(self, fotos: list[str], id_usuario: int) -> int:
+        # Separa os rostos para o treinamento
+        rostos = []
+        for foto in fotos:
+            imagem = decodificar_base64(foto)
+            escala_cinza = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
+
+            rosto = self.encontrar_rosto(escala_cinza)
+            if rosto is not None:
+                rostos.append(rosto)
+        
+        # Caso não encontre a quantidade mínima de rostos para treinar o modelo
+        if len(rostos) < QTD_MINIMA_TREINAMENTO:
+            raise HTTPException(
+                status_code=HTTPStatus.UNPROCESSABLE_ENTITY, 
+                detail="Centralizar o rosto antes de tirar as fotos"
+            )
+    
+        # Se existir, atualizar modelo, senão cria ele
+        if Path(CAMINHO_MODELO).exists():
+            self.criar_modelo_lbph(rostos, id_usuario)
+        else:
+            self.atualizar_modelo_lbph(rostos, id_usuario)
+        
+        return id_usuario
+
+    def criar_modelo_lbph(self, rostos, id_pessoa: int):
+        lbph = cv2.face.LBPHFaceRecognizer_create() # type: ignore
+        lbph.train(rostos, id_pessoa)
+        lbph.save(CAMINHO_MODELO)
+
+    def atualizar_modelo_lbph(self, rostos, id_pessoa: int):
+        lbph = cv2.face.LBPHFaceRecognizer_create() # type: ignore
+        lbph.read(CAMINHO_MODELO)
+        lbph.update(rostos, id_pessoa)
+        lbph.save(CAMINHO_MODELO)
+    
 
 def decodificar_base64(imagem_base64: str):
     try:

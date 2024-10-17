@@ -1,6 +1,9 @@
+import uuid
+
 from fastapi import HTTPException
 
 from sistema_escolar.modelos.usuario import UsuarioSchema, AtualizarUsuarioSchema
+from sistema_escolar.modelos.genericos import MensagemSchema
 from sistema_escolar.dal.usuarios import UsuarioDAO
 
 
@@ -91,6 +94,34 @@ class UsuarioControle:
 
         return UsuarioSchema(**usuarioSchema)
 
-    def criar_usuario(self, nome_usuario: UsuarioSchema): ...
+    def sequencia_usuario(self) -> int:
+        usuarioDAO = UsuarioDAO()
+        return usuarioDAO.sequencia_usuario()
+    
+    def gerar_codigo_usuario(self) -> str:
+        return str(uuid.uuid4()).upper()[:8]
 
-    def atualizar_usuario(self, id: int, usuario_atualizado: AtualizarUsuarioSchema): ...
+    def criar_usuario(self, id_usuario: int, nome_usuario: str) -> MensagemSchema:
+        dados = {
+            "id_usuario": id_usuario,
+            "nome": nome_usuario,
+            "codigo": self.gerar_codigo_usuario(),
+            "tipo": 1
+        }
+        print(dados)
+        usuarioDAO = UsuarioDAO()
+        sucesso = usuarioDAO.criar_usuario(UsuarioSchema(**dados))
+
+        if not sucesso:
+            raise HTTPException(404)
+
+        return MensagemSchema(mensagem=f"{nome_usuario} registrado com sucesso!")
+
+    def atualizar_usuario(self, id_usuario: int, usuario_atualizado: AtualizarUsuarioSchema) -> MensagemSchema:
+        usuarioDAO = UsuarioDAO()
+        sucesso = usuarioDAO.atualizar_tipo_usuario(id_usuario, usuario_atualizado.tipo)
+
+        if not sucesso:
+            raise HTTPException(404)
+
+        return MensagemSchema(mensagem=f"Cargo atualizado com sucesso!")

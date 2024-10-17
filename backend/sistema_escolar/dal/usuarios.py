@@ -1,4 +1,4 @@
-from sistema_escolar.modelos.usuario import Usuario
+from sistema_escolar.modelos.usuario import Usuario, UsuarioSchema
 from sistema_escolar.dal.conexao import Conexao
 from sistema_escolar.dal.conexao import TipoRetorno
 
@@ -101,3 +101,40 @@ class UsuarioDAO:
             resultado.append(Usuario(**aluno))
 
         return resultado
+
+    def sequencia_usuario(self) -> int:
+        con = Conexao()
+        res = con.fetch_query(
+            "SELECT MAX(id_usuario) AS novo_id FROM usuario", TipoRetorno.FETCHONE
+        )
+
+        return int(res.get("novo_id", 0))  # type: ignore
+
+    def criar_usuario(self, usuario: UsuarioSchema) -> int:
+        con = Conexao()
+        query: str = f"""
+                        INSERT INTO usuario
+                        VALUES (
+                            {usuario.id_usuario}, 
+                            '{usuario.codigo}',
+                            '{usuario.nome}',
+                            {usuario.tipo}
+                        )
+                    """
+        con.dml_query(query)
+
+        return usuario.id_usuario
+    
+    def atualizar_tipo_usuario(self, id_usuario: int, tipo: int) -> int:
+        con = Conexao()
+        query = f"""
+            UPDATE usuario
+            SET 
+                tipo = {tipo}
+            WHERE id_usuario = {id_usuario}
+        """
+
+        if not con.dml_query(query):
+            return 0
+
+        return id_usuario
