@@ -12,7 +12,7 @@ CONFIANCA_MINIMA = 10
 QTD_VIZINHOS = 5
 TAMANHO_MINIMO = (75, 75)
 USUARIO_NAO_RECONHECIDO = 0
-QTD_MINIMA_TREINAMENTO = 10
+QTD_MINIMA_TREINAMENTO = 8
 
 class BiometriaControle():
     def realizar_biometria(self, fotos: list[str]) -> int:
@@ -22,6 +22,10 @@ class BiometriaControle():
                 status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
                 detail="Nenhuma foto enviada para autenticação"
             )
+        
+        # Modelo não existe (nenhum usuário esta cadastrado)
+        if not Path(CAMINHO_MODELO).exists():
+            return USUARIO_NAO_RECONHECIDO
         
         # Tenta autenticar com cada imagem enviada
         for foto in fotos:
@@ -69,7 +73,7 @@ class BiometriaControle():
         if confianca >= CONFIANCA_MINIMA:  
             return id_pessoa
         else:
-            return 0
+            return USUARIO_NAO_RECONHECIDO
         
     def registrar_rosto(self, fotos: list[str], id_usuario: int) -> int:
         # Separa os rostos para o treinamento
