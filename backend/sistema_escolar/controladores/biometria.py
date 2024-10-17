@@ -12,7 +12,7 @@ CONFIANCA_MINIMA = 10
 QTD_VIZINHOS = 5
 TAMANHO_MINIMO = (75, 75)
 USUARIO_NAO_RECONHECIDO = 0
-QTD_MINIMA_TREINAMENTO = 10
+QTD_MINIMA_TREINAMENTO = 8
 
 class BiometriaControle():
     def realizar_biometria(self, fotos: list[str]) -> int:

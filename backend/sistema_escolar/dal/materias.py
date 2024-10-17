@@ -39,11 +39,63 @@ class MateriaDAO:
             resultado.append(Materia(**materia))
 
         return resultado
+    
+    def listar_todas_materias_do_professor(self, id_prof: int) -> list[Materia] | None:
+        con = Conexao()
+        res = con.fetch_query(
+            f"SELECT * FROM materia WHERE id_professor={id_prof}", 
+            TipoRetorno.FETCHALL
+        )
+        resultado = []
 
-    def buscar_materia_id(self, id_materia) -> Materia | None:
+        if res is None:
+            return None
+
+        for row in res:
+            materia = {
+                "id_materia": row.get("id_materia", 0),
+                "id_professor": row.get("id_professor", 0),
+                "nome": row.get("nome", None),
+                "data_inicio": datetime.fromisoformat(
+                    row.get("data_inicio", "0000-00-00 00:00:00")
+                ).date(),
+                "data_fim": datetime.fromisoformat(
+                    row.get("data_fim", "0000-00-00 00:00:00")
+                ).date(),
+            }
+
+            resultado.append(Materia(**materia))
+
+        return resultado
+
+    def buscar_materia_id(self, id_materia: int) -> Materia | None:
         con = Conexao()
         res = con.fetch_query(
             f"SELECT * FROM materia WHERE id_materia = {id_materia}",
+            TipoRetorno.FETCHONE,
+        )
+
+        if res is None or isinstance(res, list):
+            return None
+
+        materia = {
+            "id_materia": res.get("id_materia", 0),
+            "id_professor": res.get("id_professor", 0),
+            "nome": res.get("nome", ""),
+            "data_inicio": datetime.fromisoformat(
+                res.get("data_inicio", "1970-01-01 00:00:00")
+            ).date(),
+            "data_fim": datetime.fromisoformat(
+                res.get("data_fim", "1970-01-01 00:00:00")
+            ).date(),
+        }
+
+        return Materia(**materia)
+    
+    def buscar_materia_professor(self, id_materia: int, id_prof: int) -> Materia | None:
+        con = Conexao()
+        res = con.fetch_query(
+            f"SELECT * FROM materia WHERE id_materia = {id_materia} and id_professor = {id_prof}",
             TipoRetorno.FETCHONE,
         )
 
