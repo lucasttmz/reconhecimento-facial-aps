@@ -1,11 +1,12 @@
+from fastapi import HTTPException
+
+from sistema_escolar.controladores.materias import MateriaControle
+from sistema_escolar.controladores.usuarios import UsuarioControle
+from sistema_escolar.dal.boletim import BoletimDAO
 from sistema_escolar.modelos.boletim import (
     BoletimParaAlunoSchema,
     BoletimParaProfessorSchema,
 )
-from sistema_escolar.dal.boletim import BoletimDAO
-from fastapi import HTTPException
-from sistema_escolar.controladores.materias import MateriaControle
-from sistema_escolar.controladores.usuarios import UsuarioControle
 
 
 class BoletimControle:

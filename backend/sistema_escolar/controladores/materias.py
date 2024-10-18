@@ -10,6 +10,7 @@ from sistema_escolar.modelos.materia import (
 from sistema_escolar.modelos.genericos import MensagemSchema
 from sistema_escolar.dal.materias import MateriaDAO
 from sistema_escolar.controladores.usuarios import UsuarioControle
+from sistema_escolar.modelos.usuario import UsuarioSchema
 
 
 class MateriaControle:
@@ -53,13 +54,14 @@ class MateriaControle:
                 raise HTTPException(HTTPStatus.NOT_FOUND)
             
             professor = UsuarioControle().listar_info_professor(materia.id_professor)
+            alunos = self.listar_alunos_em_materia(materia.id_materia)
             materia_schema = {
                 "id_materia": materia.id_materia,
                 "nome": materia.nome,
                 "professor": professor,
                 "data_inicio": materia.data_inicio,
                 "data_fim": materia.data_fim,
-                "alunos": [],
+                "alunos": alunos,
             }
 
             resultado.append(MateriaSchema(**materia_schema))
@@ -80,6 +82,16 @@ class MateriaControle:
         }
 
         return MateriaPublicSchema(**materia_public)
+    
+    def listar_alunos_em_materia(self, id_materia: int) -> list[UsuarioSchema] | None:
+        controle = UsuarioControle()
+        materiaDAO = MateriaDAO()
+        alunos = materiaDAO.buscar_alunos_em_materia(id_materia)
+
+        if alunos is None:
+            return None
+
+        return [controle._mapear_usuario_schema(aluno) for aluno in alunos]
 
     def criar_materia(self, materia: CriarAtualizarMateriaSchema) -> MensagemSchema:
         materiaDAO = MateriaDAO()

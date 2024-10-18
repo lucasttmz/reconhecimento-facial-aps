@@ -2,6 +2,7 @@ from sistema_escolar.modelos.materia import (
     Materia,
     CriarAtualizarMateriaSchema,
 )
+from sistema_escolar.modelos.usuario import Usuario
 from sistema_escolar.dal.conexao import Conexao, TipoRetorno
 from datetime import datetime
 
@@ -115,6 +116,31 @@ class MateriaDAO:
         }
 
         return Materia(**materia)
+    
+    def buscar_alunos_em_materia(self, id_materia: int) -> list[Usuario] | None:
+        con = Conexao()
+        res = con.fetch_query(
+            f"""SELECT u.*
+            FROM usuario u
+            JOIN boletim b ON u.id_usuario = b.id_usuario
+            WHERE b.id_materia = {id_materia};""",
+            TipoRetorno.FETCHALL,
+        )
+
+        if res is None:
+            return None
+        
+        resultado = []
+        for row in res:
+            professor = {
+                "id_usuario": row["id_usuario"],
+                "codigo": row["codigo"],
+                "nome": row["nome"],
+                "tipo": row["tipo"],
+            }
+            resultado.append(Usuario(**professor))
+
+        return resultado
 
     def criar_materia(
         self, id_professor: int, nova_materia: CriarAtualizarMateriaSchema

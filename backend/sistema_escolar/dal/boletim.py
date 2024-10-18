@@ -1,4 +1,5 @@
 from sistema_escolar.modelos.boletim import Boletim
+from sistema_escolar.modelos.usuario import Usuario
 from sistema_escolar.dal.conexao import Conexao, TipoRetorno
 
 
@@ -55,8 +56,7 @@ class BoletimDAO:
         if res is None:
             return None
 
-        resultado: list[Boletim] = []
-
+        resultado = []
         for row in res:
             boletim = {
                 "id_boletim": row["id_boletim"],
