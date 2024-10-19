@@ -1,7 +1,9 @@
-import pytest
-from fastapi.testclient import TestClient
-
+import base64
 from random import randint
+
+import cv2
+from fastapi.testclient import TestClient
+import pytest
 
 from sistema_escolar.main import app
 from tests.util import criar_jwt
@@ -45,3 +47,11 @@ def notas_e_faltas():
 @pytest.fixture
 def alteracao_de_cargo():
     return {"tipo": randint(1, 3)}
+
+@pytest.fixture(scope="session")
+def imagem_base64():
+    imagem = cv2.imread("tests/img/b64.jpg")
+    _, buffer = cv2.imencode('.jpg', imagem)
+    imagem_base64 = base64.b64encode(buffer).decode('utf-8')
+
+    return f"data:image/jpeg;base64,{imagem_base64}"

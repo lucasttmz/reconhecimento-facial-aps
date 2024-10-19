@@ -10,6 +10,9 @@ lint:
 test:
 	pytest -v
 
+test_fast:
+	pytest -v -m "no slow"
+
 format:
 	ruff format
 
