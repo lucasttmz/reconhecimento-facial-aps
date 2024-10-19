@@ -7,6 +7,12 @@ lint:
 	ruff format
 	ruff check --fix
 
+test:
+	pytest -v
+
+test_fast:
+	pytest -v -m "no slow"
+
 format:
 	ruff format
 

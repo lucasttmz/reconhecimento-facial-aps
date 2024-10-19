@@ -10,6 +10,7 @@ from jwt import encode, decode, DecodeError
 from sistema_escolar.controladores.biometria import BiometriaControle, USUARIO_NAO_RECONHECIDO
 from sistema_escolar.controladores.usuarios import UsuarioControle
 from sistema_escolar.modelos.autenticacao import RegistroSchema, Token
+from sistema_escolar.modelos.usuario import TipoUsuario
 from sistema_escolar.modelos.genericos import MensagemSchema
 
 
@@ -20,6 +21,10 @@ T_Token = Annotated[HTTPAuthorizationCredentials, Depends(HTTPBearer())]
 
 def usuario_autenticado(token: T_Token):
     return AutenticacaoControle.decodificar_token(token)
+
+
+def possui_permissao(usuario: dict, permitidos: list[TipoUsuario]):
+    return usuario.get("permissoes") in permitidos
     
 
 class AutenticacaoControle:

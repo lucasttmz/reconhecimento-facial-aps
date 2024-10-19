@@ -1,11 +1,12 @@
+from fastapi import HTTPException
+
+from sistema_escolar.controladores.materias import MateriaControle
+from sistema_escolar.controladores.usuarios import UsuarioControle
+from sistema_escolar.dal.boletim import BoletimDAO
 from sistema_escolar.modelos.boletim import (
     BoletimParaAlunoSchema,
     BoletimParaProfessorSchema,
 )
-from sistema_escolar.dal.boletim import BoletimDAO
-from fastapi import HTTPException
-from sistema_escolar.controladores.materias import MateriaControle
-from sistema_escolar.controladores.usuarios import UsuarioControle
 
 
 class BoletimControle:
@@ -84,3 +85,38 @@ class BoletimControle:
             resultado.append(BoletimParaProfessorSchema(**boletimSchema))
 
         return resultado
+    
+    def adicionar_boletins(self, id_alunos: list[int], id_materia: int):
+        boletimDAO = BoletimDAO()
+
+        boletins = boletimDAO.buscar_boletim_por_materia(id_materia)
+        if boletins is None:
+            alunos_na_materia = []
+        else:
+            alunos_na_materia = [boletim.id_usuario for boletim in boletins]
+        
+        for id_aluno in id_alunos:
+            if id_aluno not in alunos_na_materia:
+                boletimDAO.criar_boletim_para_aluno(id_aluno, id_materia)
+
+        return True
+
+
+    def adicionar_e_remover_boletins(self, id_alunos: list[int], id_materia: int):
+        boletimDAO = BoletimDAO()
+
+        boletins = boletimDAO.buscar_boletim_por_materia(id_materia)
+        if boletins is None:
+            alunos_na_materia = []
+        else:
+            alunos_na_materia = [boletim.id_usuario for boletim in boletins]
+        
+        for id_aluno in id_alunos:
+            if id_aluno not in alunos_na_materia:
+                boletimDAO.criar_boletim_para_aluno(id_aluno, id_materia)
+
+        for aluno_antigo in alunos_na_materia:
+            if aluno_antigo not in id_alunos:
+                boletimDAO.remover_boletim_para_aluno(aluno_antigo, id_materia)
+
+        return True

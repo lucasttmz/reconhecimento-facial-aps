@@ -26,7 +26,7 @@ class BiometriaControle():
         # Modelo não existe (nenhum usuário esta cadastrado)
         if not Path(CAMINHO_MODELO).exists():
             return USUARIO_NAO_RECONHECIDO
-        
+
         # Tenta autenticar com cada imagem enviada
         for foto in fotos:
             imagem = decodificar_base64(foto)
