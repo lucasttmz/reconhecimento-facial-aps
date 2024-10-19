@@ -1,4 +1,4 @@
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createLazyFileRoute, Link } from '@tanstack/react-router'
 import { makeRequestProps } from '../api/axios';
 import { apiService } from "../api/api";
 import {
@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { CONST } from '../const/Index';
 import { CreateMateriaDialog } from '../components/Dialogs/CreateMateriaDialog';
 import { useUserStore } from '../store/user';
+import { Eye } from 'lucide-react';
 
 
 export const Route = createLazyFileRoute('/materias')({
@@ -25,7 +26,7 @@ function Materias() {
     const [materias, setMaterias] = useState<materias[]>()
     const [carregando, setCarregando] = useState(true);
     const [response, setResponse] = useState<unknown>()
-    const { states: { user }} = useUserStore();
+    const { states: { user } } = useUserStore();
 
     const apiParams: makeRequestProps = {
         method: CONST.HTTP.GET,
@@ -58,9 +59,9 @@ function Materias() {
     return (
 
         <div>
-            
+
             <div className='p-3'>
-            {user?.permissions == 3 ? <CreateMateriaDialog/> : <span></span>}
+                {user?.permissions == 3 ? <CreateMateriaDialog /> : <span></span>}
                 <Table>
                     <TableCaption>Lista de Materias</TableCaption>
                     <TableHeader>
@@ -70,6 +71,7 @@ function Materias() {
                             <TableHead className='text-white'>Data Inicio</TableHead>
                             <TableHead className='text-white'>Data Fim</TableHead>
                             <TableHead className='text-white'>Quantidade Alunos</TableHead>
+                            <TableHead> Açôes</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -81,13 +83,18 @@ function Materias() {
 
                                 materias?.length ? (
                                     materias.map((materia) => (
+
                                         <TableRow key={materia.id_materia}>
-                                            <TableCell>{materia.nome}</TableCell>
-                                            <TableCell>{materia.professor.nome}</TableCell>
-                                            <TableCell>{materia.data_inicio.split('-').reverse().join('/')}</TableCell>
-                                            <TableCell>{materia.data_fim.split('-').reverse().join('/')}</TableCell>
-                                            <TableCell>{materia.alunos.length}</TableCell>
+                                            
+                                                <TableCell>{materia.nome}</TableCell>
+                                                <TableCell>{materia.professor.nome}</TableCell>
+                                                <TableCell>{materia.data_inicio.split('-').reverse().join('/')}</TableCell>
+                                                <TableCell>{materia.data_fim.split('-').reverse().join('/')}</TableCell>
+                                                <TableCell>{materia.alunos.length}</TableCell>
+                                                <TableCell> <Link to='/materia/$postId' params={{ postId: materia.id_materia.toString()}}><Eye /></Link></TableCell>
+                                            
                                         </TableRow>
+
                                     ))
                                 ) : (
                                     <p></p>

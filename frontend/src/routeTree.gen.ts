@@ -13,12 +13,14 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as MateriaPostIdImport } from './routes/materia.$postId'
 import { Route as AlunoPostIdImport } from './routes/aluno.$postId'
 
 // Create Virtual Routes
 
 const MateriasLazyImport = createFileRoute('/materias')()
 const HomeLazyImport = createFileRoute('/home')()
+const BoletimLazyImport = createFileRoute('/boletim')()
 const AlunosLazyImport = createFileRoute('/alunos')()
 const IndexLazyImport = createFileRoute('/')()
 
@@ -34,6 +36,11 @@ const HomeLazyRoute = HomeLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/home.lazy').then((d) => d.Route))
 
+const BoletimLazyRoute = BoletimLazyImport.update({
+  path: '/boletim',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/boletim.lazy').then((d) => d.Route))
+
 const AlunosLazyRoute = AlunosLazyImport.update({
   path: '/alunos',
   getParentRoute: () => rootRoute,
@@ -43,6 +50,11 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const MateriaPostIdRoute = MateriaPostIdImport.update({
+  path: '/materia/$postId',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const AlunoPostIdRoute = AlunoPostIdImport.update({
   path: '/aluno/$postId',
@@ -67,6 +79,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlunosLazyImport
       parentRoute: typeof rootRoute
     }
+    '/boletim': {
+      id: '/boletim'
+      path: '/boletim'
+      fullPath: '/boletim'
+      preLoaderRoute: typeof BoletimLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/home': {
       id: '/home'
       path: '/home'
@@ -88,6 +107,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlunoPostIdImport
       parentRoute: typeof rootRoute
     }
+    '/materia/$postId': {
+      id: '/materia/$postId'
+      path: '/materia/$postId'
+      fullPath: '/materia/$postId'
+      preLoaderRoute: typeof MateriaPostIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -96,51 +122,83 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/alunos': typeof AlunosLazyRoute
+  '/boletim': typeof BoletimLazyRoute
   '/home': typeof HomeLazyRoute
   '/materias': typeof MateriasLazyRoute
   '/aluno/$postId': typeof AlunoPostIdRoute
+  '/materia/$postId': typeof MateriaPostIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/alunos': typeof AlunosLazyRoute
+  '/boletim': typeof BoletimLazyRoute
   '/home': typeof HomeLazyRoute
   '/materias': typeof MateriasLazyRoute
   '/aluno/$postId': typeof AlunoPostIdRoute
+  '/materia/$postId': typeof MateriaPostIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/alunos': typeof AlunosLazyRoute
+  '/boletim': typeof BoletimLazyRoute
   '/home': typeof HomeLazyRoute
   '/materias': typeof MateriasLazyRoute
   '/aluno/$postId': typeof AlunoPostIdRoute
+  '/materia/$postId': typeof MateriaPostIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/alunos' | '/home' | '/materias' | '/aluno/$postId'
+  fullPaths:
+    | '/'
+    | '/alunos'
+    | '/boletim'
+    | '/home'
+    | '/materias'
+    | '/aluno/$postId'
+    | '/materia/$postId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/alunos' | '/home' | '/materias' | '/aluno/$postId'
-  id: '__root__' | '/' | '/alunos' | '/home' | '/materias' | '/aluno/$postId'
+  to:
+    | '/'
+    | '/alunos'
+    | '/boletim'
+    | '/home'
+    | '/materias'
+    | '/aluno/$postId'
+    | '/materia/$postId'
+  id:
+    | '__root__'
+    | '/'
+    | '/alunos'
+    | '/boletim'
+    | '/home'
+    | '/materias'
+    | '/aluno/$postId'
+    | '/materia/$postId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   AlunosLazyRoute: typeof AlunosLazyRoute
+  BoletimLazyRoute: typeof BoletimLazyRoute
   HomeLazyRoute: typeof HomeLazyRoute
   MateriasLazyRoute: typeof MateriasLazyRoute
   AlunoPostIdRoute: typeof AlunoPostIdRoute
+  MateriaPostIdRoute: typeof MateriaPostIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   AlunosLazyRoute: AlunosLazyRoute,
+  BoletimLazyRoute: BoletimLazyRoute,
   HomeLazyRoute: HomeLazyRoute,
   MateriasLazyRoute: MateriasLazyRoute,
   AlunoPostIdRoute: AlunoPostIdRoute,
+  MateriaPostIdRoute: MateriaPostIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -157,9 +215,11 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/alunos",
+        "/boletim",
         "/home",
         "/materias",
-        "/aluno/$postId"
+        "/aluno/$postId",
+        "/materia/$postId"
       ]
     },
     "/": {
@@ -167,6 +227,9 @@ export const routeTree = rootRoute
     },
     "/alunos": {
       "filePath": "alunos.lazy.tsx"
+    },
+    "/boletim": {
+      "filePath": "boletim.lazy.tsx"
     },
     "/home": {
       "filePath": "home.lazy.tsx"
@@ -176,6 +239,9 @@ export const routeTree = rootRoute
     },
     "/aluno/$postId": {
       "filePath": "aluno.$postId.tsx"
+    },
+    "/materia/$postId": {
+      "filePath": "materia.$postId.tsx"
     }
   }
 }

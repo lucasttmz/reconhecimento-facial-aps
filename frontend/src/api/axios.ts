@@ -1,4 +1,6 @@
 import axios, { AxiosInstance } from "axios";
+import { useUserStore } from '../store/user'
+
 
 export interface makeRequestProps {
   path: string;
@@ -15,6 +17,7 @@ export class api {
   constructor() {
     this.api = axios.create({
       baseURL: 'http://localhost:8000/',
+      headers:{'Authorization': `Bearer ${localStorage.getItem('token')}`}
     });
   }
 

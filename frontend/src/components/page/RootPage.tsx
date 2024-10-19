@@ -6,7 +6,7 @@ import { Toaster } from "../ui/toaster"
 
 export const RootPage: React.FC = () => {
   const navigate = useNavigate({ from: '/' })
-  const { actions: { addUser, removeUser } } = useUserStore()
+  const { states: { user }, actions: { addUser, removeUser } } = useUserStore()
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
