@@ -89,7 +89,7 @@ class MateriaControle:
         alunos = materiaDAO.buscar_alunos_em_materia(id_materia)
 
         if alunos is None:
-            return None
+            return []
 
         return [controle._mapear_usuario_schema(aluno) for aluno in alunos]
 

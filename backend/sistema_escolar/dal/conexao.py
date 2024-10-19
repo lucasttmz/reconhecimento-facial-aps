@@ -38,7 +38,13 @@ class Conexao:
             d_row[col[0]] = row[i]
         return d_row
 
-    def fetch_query(self, query: str, tipo_retorno: TipoRetorno = TipoRetorno.FETCHONE, mensagem_debug: str = "Erro") -> list[dict] | dict | None:
+    def fetch_query(
+            self, 
+            query: str, 
+            params: list, 
+            tipo_retorno: TipoRetorno = TipoRetorno.FETCHONE, 
+            mensagem_debug: str = "Erro"
+    ) -> list[dict] | dict | None:
         stmt = self.limpar_query(query)
         resultado = None
         cursor = None
@@ -46,7 +52,10 @@ class Conexao:
         try:
             with self.iniciar() as conn:
                 cursor = conn.cursor()
-                result = cursor.execute(stmt)
+                if params:
+                    result = cursor.execute(stmt, params)
+                else:
+                    result = cursor.execute(stmt)
 
                 if tipo_retorno == TipoRetorno.FETCHONE:
                     resultado = result.fetchone()
@@ -63,7 +72,7 @@ class Conexao:
 
         return resultado
 
-    def dml_query(self, query: str, mensagem_debug: str = "Erro") -> int:
+    def dml_query(self, query: str, params: list, mensagem_debug: str = "Erro") -> int:
         stmt = self.limpar_query(query)
         linhas_afetadas: int = 0
         cursor = None
@@ -71,7 +80,7 @@ class Conexao:
         try:
             with self.iniciar() as conn:
                 cursor = conn.cursor()
-                cursor.execute(stmt)
+                cursor.execute(stmt, params)
                 linhas_afetadas = cursor.rowcount
                 conn.commit() 
 

@@ -1,4 +1,4 @@
-from sistema_escolar.modelos.usuario import Usuario, UsuarioSchema
+from sistema_escolar.modelos.usuario import Usuario, UsuarioSchema, TipoUsuario
 from sistema_escolar.dal.conexao import Conexao
 from sistema_escolar.dal.conexao import TipoRetorno
 
@@ -6,135 +6,87 @@ from sistema_escolar.dal.conexao import TipoRetorno
 class UsuarioDAO:
     def buscar_usuario_por_id(self, id: int) -> Usuario | None:
         con = Conexao()
-        res = con.fetch_query(
-            f"SELECT * FROM usuario WHERE id_usuario = {id}", TipoRetorno.FETCHONE
-        )
+        query = "SELECT * FROM usuario WHERE id_usuario = ?"
+        res = con.fetch_query(query, [id], TipoRetorno.FETCHONE)
 
         if res is None or isinstance(res, list):
             return None
 
-        usuario = {
-            "id_usuario": res["id_usuario"],
-            "codigo": res["codigo"],
-            "nome": res["nome"],
-            "tipo": res["tipo"],
-        }
+        return self._mapear_usuario(res)
 
-        return Usuario(**usuario)
+    def buscar_diretor_por_id(self, id: int) -> Usuario | None:
+        return self.buscar_usuario_por_id_e_tipo(id, TipoUsuario.DIRETOR)
 
     def buscar_professor_por_id(self, id: int) -> Usuario | None:
-        con = Conexao()
-        res = con.fetch_query(
-            f"SELECT * FROM usuario WHERE id_usuario = {id} AND tipo = 2",
-            TipoRetorno.FETCHONE,
-        )
-
-        if not res or isinstance(res, list):
-            return None
-
-        usuario = {
-            "id_usuario": res["id_usuario"],
-            "codigo": res["codigo"],
-            "nome": res["nome"],
-            "tipo": res["tipo"],
-        }
-
-        return Usuario(**usuario)
+        return self.buscar_usuario_por_id_e_tipo(id, TipoUsuario.PROFESSOR)
 
     def buscar_aluno_por_id(self, id: int) -> Usuario | None:
+        return self.buscar_usuario_por_id_e_tipo(id, TipoUsuario.ALUNO)
+    
+    def buscar_usuario_por_id_e_tipo(self, id: int, tipo: int) -> Usuario | None:
         con = Conexao()
-        res = con.fetch_query(
-            f"SELECT * FROM usuario WHERE id_usuario = {id} AND tipo = 1",
-            TipoRetorno.FETCHONE,
-        )
+        query = "SELECT * FROM usuario WHERE id_usuario = ? AND tipo = ?"
+        res = con.fetch_query(query, [id, tipo], TipoRetorno.FETCHONE)
 
         if not res or isinstance(res, list):
             return None
 
-        usuario = {
-            "id_usuario": res["id_usuario"],
-            "codigo": res["codigo"],
-            "nome": res["nome"],
-            "tipo": res["tipo"],
-        }
-
-        return Usuario(**usuario)
+        return self._mapear_usuario(res)
 
     def todos_os_professores(self) -> list[Usuario] | None:
         con = Conexao()
         res = con.fetch_query(
-            "SELECT * FROM usuario WHERE tipo = 2", TipoRetorno.FETCHALL
+            "SELECT * FROM usuario WHERE tipo = 2", [], TipoRetorno.FETCHALL
         )
 
         if res is None:
             return None
 
-        resultado: list[Usuario] = []
-        for row in res:
-            professor = {
-                "id_usuario": row["id_usuario"],
-                "codigo": row["codigo"],
-                "nome": row["nome"],
-                "tipo": row["tipo"],
-            }
-            resultado.append(Usuario(**professor))
-
-        return resultado
+        return [self._mapear_usuario(linha) for linha in res]
 
     def todos_os_alunos(self) -> list[Usuario] | None:
         con = Conexao()
         res = con.fetch_query(
-            "SELECT * FROM usuario WHERE tipo = 1", TipoRetorno.FETCHALL
+            "SELECT * FROM usuario WHERE tipo = 1", [], TipoRetorno.FETCHALL
         )
 
         if res is None:
             return None
 
-        resultado: list[Usuario] = []
-        for row in res:
-            aluno = {
-                "id_usuario": row["id_usuario"],
-                "codigo": row["codigo"],
-                "nome": row["nome"],
-                "tipo": row["tipo"],
-            }
-            resultado.append(Usuario(**aluno))
+        return [self._mapear_usuario(linha) for linha in res]
 
-        return resultado
+    def _mapear_usuario(self, linha) -> Usuario:
+        usuario = {
+            "id_usuario": linha["id_usuario"],
+            "codigo": linha["codigo"],
+            "nome": linha["nome"],
+            "tipo": linha["tipo"],
+        }
+        
+        return Usuario(**usuario)
 
     def sequencia_usuario(self) -> int:
         con = Conexao()
         res = con.fetch_query(
-            "SELECT MAX(id_usuario) AS novo_id FROM usuario", TipoRetorno.FETCHONE
+            "SELECT MAX(id_usuario) AS novo_id FROM usuario", [], TipoRetorno.FETCHONE
         )
 
         return int(res.get("novo_id", 0))  # type: ignore
 
     def criar_usuario(self, usuario: UsuarioSchema) -> int:
         con = Conexao()
-        query: str = f"""
-                        INSERT INTO usuario
-                        VALUES (
-                            {usuario.id_usuario}, 
-                            '{usuario.codigo}',
-                            '{usuario.nome}',
-                            {usuario.tipo}
-                        )
-                    """
-        con.dml_query(query)
+        query: str = "INSERT INTO usuario VALUES (?, ?, ?, ?)"
+        params = [usuario.id_usuario, usuario.codigo, usuario.nome, usuario.tipo]
+        con.dml_query(query, params)
 
         return usuario.id_usuario
     
     def atualizar_tipo_usuario(self, id_usuario: int, tipo: int) -> int:
         con = Conexao()
-        query = f"""
-            UPDATE usuario
-            SET 
-                tipo = {tipo}
-            WHERE id_usuario = {id_usuario}
-        """
+        query = "UPDATE usuario SET tipo = ? WHERE id_usuario = ?"
+        params = [tipo, id_usuario]
 
-        if not con.dml_query(query):
+        if not con.dml_query(query, params):
             return 0
 
         return id_usuario
