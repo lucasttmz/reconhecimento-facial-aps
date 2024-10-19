@@ -6,6 +6,7 @@ import { ButtonMenu } from '../components/ButtonMenu';
 import { Book, GraduationCap, User, BookOpen } from "lucide-react"
 
 
+
 export const Route = createLazyFileRoute('/home')({
   component: Home,
 })

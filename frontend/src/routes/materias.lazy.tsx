@@ -12,6 +12,9 @@ import {
 } from "../components/ui/table"
 import { useEffect, useState } from 'react';
 import { CONST } from '../const/Index';
+import { CreateMateriaDialog } from '../components/Dialogs/CreateMateriaDialog';
+import { useUserStore } from '../store/user';
+
 
 export const Route = createLazyFileRoute('/materias')({
     component: Materias,
@@ -22,6 +25,7 @@ function Materias() {
     const [materias, setMaterias] = useState<materias[]>()
     const [carregando, setCarregando] = useState(true);
     const [response, setResponse] = useState<unknown>()
+    const { states: { user }} = useUserStore();
 
     const apiParams: makeRequestProps = {
         method: CONST.HTTP.GET,
@@ -32,7 +36,7 @@ function Materias() {
         try {
             const data = await apiService().makeRequest(apiParams)
             setMaterias(data)
-            return data 
+            return data
         }
         catch (err) {
 
@@ -52,42 +56,47 @@ function Materias() {
 
 
     return (
+
         <div>
-            <Table>
-                <TableCaption>Lista de Materias</TableCaption>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-[100px] text-center">Nome Materia</TableHead>
-                        <TableHead>Nome Professor</TableHead>
-                        <TableHead>Data Inicio</TableHead>
-                        <TableHead>Data Fim</TableHead>
-                        <TableHead>Quantidade Alunos</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
+            
+            <div className='p-3'>
+            {user?.permissions == 3 ? <CreateMateriaDialog/> : <span></span>}
+                <Table>
+                    <TableCaption>Lista de Materias</TableCaption>
+                    <TableHeader>
+                        <TableRow className='bg-blue-700'>
+                            <TableHead className='text-white'>Nome Materia</TableHead>
+                            <TableHead className='text-white'>Nome Professor</TableHead>
+                            <TableHead className='text-white'>Data Inicio</TableHead>
+                            <TableHead className='text-white'>Data Fim</TableHead>
+                            <TableHead className='text-white'>Quantidade Alunos</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
 
-                    {
-                        carregando ? (
-                            <p>Carregado</p>
-                        ) : (
-
-                            materias?.length ? (
-                                materias.map((materia) => (
-                                    <TableRow key={materia.id_materia}>
-                                        <TableCell>{materia.nome}</TableCell>
-                                        <TableCell>{materia.professor.nome}</TableCell>
-                                        <TableCell>{materia.data_inicio}</TableCell>
-                                        <TableCell>{materia.data_fim}</TableCell>
-                                        <TableCell>{materia.alunos.length}</TableCell>
-                                    </TableRow>
-                                ))
+                        {
+                            carregando ? (
+                                <p>Carregando ... </p>
                             ) : (
-                                <p></p>
+
+                                materias?.length ? (
+                                    materias.map((materia) => (
+                                        <TableRow key={materia.id_materia}>
+                                            <TableCell>{materia.nome}</TableCell>
+                                            <TableCell>{materia.professor.nome}</TableCell>
+                                            <TableCell>{materia.data_inicio.split('-').reverse().join('/')}</TableCell>
+                                            <TableCell>{materia.data_fim.split('-').reverse().join('/')}</TableCell>
+                                            <TableCell>{materia.alunos.length}</TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <p></p>
+                                )
                             )
-                        )
-                    }
-                </TableBody>
-            </Table>
+                        }
+                    </TableBody>
+                </Table>
+            </div>
         </div>
     )
 }

@@ -1,4 +1,4 @@
-import { createLazyFileRoute, Link} from '@tanstack/react-router'
+import { createLazyFileRoute, Link } from '@tanstack/react-router'
 import { makeRequestProps } from '../api/axios';
 import { apiService } from "../api/api";
 import {
@@ -12,9 +12,10 @@ import {
 } from "../components/ui/table"
 import { useEffect, useState } from 'react';
 import { CONST } from '../const/Index';
+import { SquarePen } from 'lucide-react';
 
 export const Route = createLazyFileRoute('/alunos')({
-  component: Alunos,
+    component: Alunos,
 })
 
 interface aluno {
@@ -24,8 +25,8 @@ interface aluno {
     tipo: number
 }
 
-function Alunos(){
-    
+function Alunos() {
+
     const [carregando, setCarregando] = useState(true);
     const [alunos, setAlunos] = useState<aluno[]>();
     const apiParams: makeRequestProps = {
@@ -55,7 +56,7 @@ function Alunos(){
     }, [])
 
     return (
-        <div>
+        <div className='p-2 border-solid border-black'>
             <Table>
                 <TableCaption>Lista de Alunos</TableCaption>
                 <TableHeader>
@@ -73,12 +74,13 @@ function Alunos(){
 
                             alunos?.length ? (
                                 alunos.map((aluno) => (
-                                    <Link to='/aluno/$postId' params={{postId: aluno.id_usuario.toString()}} key={aluno.id_usuario}>
-                                        <TableRow >
+
+                                    <TableRow key={aluno.id_usuario}>
                                         <TableCell>{aluno.codigo}</TableCell>
-                                        <TableCell>{aluno.nome}</TableCell>                           
-                                        </TableRow>
-                                    </Link>
+                                        <TableCell>{aluno.nome}</TableCell>
+                                        <TableCell> <Link to='/aluno/$postId' params={{ postId: aluno.id_usuario.toString() }}><SquarePen color='green' /></Link> </TableCell>
+                                    </TableRow>
+
                                 ))
                             ) : (
                                 <p></p>
