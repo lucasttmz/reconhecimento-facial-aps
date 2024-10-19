@@ -43,7 +43,8 @@ def todas_as_materias(controle: T_MateriaControle, usuario: T_Usuario):
 @router.post("/", response_model=MensagemSchema)
 def criar_materia(
     materia: CriarAtualizarMateriaSchema, 
-    controle: T_MateriaControle, 
+    mat_controle: T_MateriaControle, 
+    bol_controle: T_BoletimControle,
     usuario: T_Usuario
 ):
     """Cria uma nova matéria associada a um professor"""
@@ -51,7 +52,7 @@ def criar_materia(
     if not possui_permissao(usuario, [TipoUsuario.DIRETOR]):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN)
 
-    return controle.criar_materia(materia)
+    return mat_controle.criar_materia(materia, bol_controle)
 
 
 @router.get("/{id_materia}", response_model=MateriaSchema)
@@ -73,7 +74,8 @@ def pesquisar_materia(id_materia: int, controle: T_MateriaControle, usuario: T_U
 def atualizar_materia(
     id_materia: int, 
     materia: CriarAtualizarMateriaSchema, 
-    controle: T_MateriaControle, 
+    mat_controle: T_MateriaControle, 
+    bol_controle: T_BoletimControle,
     usuario: T_Usuario
 ):
     """Cria uma nova matéria associada a um professor"""
@@ -81,7 +83,7 @@ def atualizar_materia(
     if not possui_permissao(usuario, [TipoUsuario.DIRETOR]):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN)
 
-    return controle.atualizar_materia(id_materia, materia)
+    return mat_controle.atualizar_materia(id_materia, materia, bol_controle)
 
 
 @router.get("/{id_materia}/aluno/{id_aluno}", response_model=BoletimParaProfessorSchema)

@@ -46,12 +46,12 @@ class MateriaControle:
     
     def _mapear_materia_schema(self, materias: list | None) -> list:
         if materias is None:
-            raise HTTPException(HTTPStatus.NOT_FOUND)
+            raise HTTPException(HTTPStatus.NOT_FOUND, "Matérias não encontradas")
         
         resultado = []
         for materia in materias:
             if materia is None or materia.id_materia == 0:
-                raise HTTPException(HTTPStatus.NOT_FOUND)
+                raise HTTPException(HTTPStatus.NOT_FOUND, "Matéria não encontrada")
             
             professor = UsuarioControle().listar_info_professor(materia.id_professor)
             alunos = self.listar_alunos_em_materia(materia.id_materia)
@@ -70,7 +70,7 @@ class MateriaControle:
     
     def _mapear_public_materia_schema(self, materia) -> MateriaPublicSchema:
         if materia is None or materia.id_materia == 0:
-            raise HTTPException(HTTPStatus.NOT_FOUND)
+            raise HTTPException(HTTPStatus.NOT_FOUND, "Matéria não encontrada")
 
         professor = UsuarioControle().listar_info_professor(materia.id_professor)
         materia_public = {
@@ -93,23 +93,43 @@ class MateriaControle:
 
         return [controle._mapear_usuario_schema(aluno) for aluno in alunos]
 
-    def criar_materia(self, materia: CriarAtualizarMateriaSchema) -> MensagemSchema:
+    def criar_materia(
+            self, materia: CriarAtualizarMateriaSchema, boletim_controle
+    ) -> MensagemSchema:
         materiaDAO = MateriaDAO()
-        sucesso = materiaDAO.criar_materia(materia.codigo_professor, materia)
+        id_materia = materiaDAO.criar_materia(materia.codigo_professor, materia)
+        if not id_materia:
+            raise HTTPException(
+                HTTPStatus.NOT_FOUND, detail="Não foi possível criar a matéria"
+            )
+        
+        sucesso = boletim_controle.adicionar_boletins(materia.codigo_alunos, id_materia)
         if not sucesso:
-            raise HTTPException(HTTPStatus.NOT_FOUND)
+            raise HTTPException(
+                HTTPStatus.NOT_FOUND, "Não foi possível adicionar os alunos a matéria"
+            )
 
         return MensagemSchema(mensagem=f"Matéria {materia.nome} criada com sucesso!")
 
     def atualizar_materia(
-        self, id_materia: int, materia: CriarAtualizarMateriaSchema
+        self, id_materia: int, materia: CriarAtualizarMateriaSchema, boletim_controle
     ) -> MensagemSchema:
         materiaDAO = MateriaDAO()
         sucesso = materiaDAO.atualizar_materia(
             id_materia, materia.codigo_professor, materia
         )
         if not sucesso:
-            raise HTTPException(HTTPStatus.NOT_FOUND)
+            raise HTTPException(
+                HTTPStatus.NOT_FOUND, "Não foi possível atualizar a matéria"
+            )
+        
+        sucesso = boletim_controle.adicionar_e_remover_boletins(
+            materia.codigo_alunos, id_materia
+        )
+        if not sucesso:
+            raise HTTPException(
+                HTTPStatus.NOT_FOUND, "Não foi possível adicionar os alunos a matéria"
+            )
 
         return MensagemSchema(
             mensagem=f"Matéria {materia.nome} atualizada com sucesso!"

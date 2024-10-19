@@ -69,3 +69,13 @@ class BoletimDAO:
             resultado.append(Boletim(**boletim))
 
         return resultado
+    
+    def criar_boletim_para_aluno(self, id_aluno: int,  id_materia: int):
+        con = Conexao()
+        query = f"INSERT INTO boletim VALUES (NULL, {id_aluno}, {id_materia}, NULL, 0)"
+        return con.dml_query(query)
+    
+    def remover_boletim_para_aluno(self, id_aluno: int,  id_materia: int):
+        con = Conexao()
+        query = f"DELETE FROM boletim WHERE id_usuario={id_aluno} AND id_materia={id_materia}"
+        return con.dml_query(query)

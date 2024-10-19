@@ -27,7 +27,7 @@ class CriarAtualizarMateriaSchema(BaseModel):
     codigo_professor: int
     data_inicio: date
     data_fim: date
-    codigo_alunos: list[str]
+    codigo_alunos: list[int]
 
 
 class MateriaPublicSchema(BaseModel):
