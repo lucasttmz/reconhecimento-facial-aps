@@ -16,6 +16,7 @@ import { useState } from "react";
 import { makeRequestProps } from "../../api/axios";
 import { apiService } from "../../api/api";
 import { useToast } from "../../hooks/use-toast";
+import { DialogClose } from "@radix-ui/react-dialog";
 interface paramsPost {
   nome: string,
   sobrenome: string,
@@ -30,8 +31,8 @@ export const InputDialog = () => {
     nome: '',
     sobrenome: '',
     fotos: []
-  }) 
-  const apiCall:makeRequestProps = {
+  })
+  const apiCall: makeRequestProps = {
     path: "registrar",
     method: "POST",
     body: {
@@ -40,10 +41,10 @@ export const InputDialog = () => {
     }
   }
   const handleCapturedImages = (images: string[]) => {
-    
+
     if (images.length == 10) {
 
-      if(params.nome != "" && params.sobrenome != ""){
+      if (params.nome != "" && params.sobrenome != "") {
         setButtonDisabled(false)
       }
 
@@ -55,29 +56,29 @@ export const InputDialog = () => {
     setCapturedImages(images);
   };
 
-  const setInputValue = (e:any, inputName:string)=>{
+  const setInputValue = (e: any, inputName: string) => {
 
     setParams({
       ...params,
       [inputName]: e.target.value,
     })
 
-    if(params.nome != "" && params.sobrenome != "" && capturedImages.length == 10){
+    if (params.nome != "" && params.sobrenome != "" && capturedImages.length == 10) {
       setButtonDisabled(false)
     }
-  
+
   }
-  const apiPostService = async ()=>{
+  const apiPostService = async () => {
 
     const data = await apiService().makeRequest(apiCall)
-    if(data.status == 200){
+    if (data.status == 200) {
       console.log(data)
       toast({
         title: "Okay",
-        description: 'Tudo certo para fazer login'
+        description: 'Tudo certo para fazer login',
       })
     }
-    else{
+    else {
       toast({
         title: "Opss...",
         description: 'Algo deu errado',
@@ -99,12 +100,12 @@ export const InputDialog = () => {
             <div className="flex flex-col gap-4">
               <div className="flex items-start flex-col gap-2">
                 <Label htmlFor="text"> Primeiro Nome </Label>
-                <Input type="text" placeholder="Nome" onChange={(e)=>setInputValue(e,"nome")} />
+                <Input type="text" placeholder="Nome" onChange={(e) => setInputValue(e, "nome")} />
               </div>
-              
+
               <div className="flex items-start flex-col gap-2">
                 <Label htmlFor="text"> Sobrenome </Label>
-                <Input type="text" placeholder="Sobrenome" onChange={(e)=>setInputValue(e,"sobrenome")}/>
+                <Input type="text" placeholder="Sobrenome" onChange={(e) => setInputValue(e, "sobrenome")} />
               </div>
 
               <div className="flex items-start flex-col gap-2">
@@ -129,9 +130,11 @@ export const InputDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-col">
-          <Button type="submit" disabled={buttonDisabled} onClick={apiPostService}>
-            Enviar Cadastro
-          </Button>
+          <DialogClose asChild>
+            <Button type="submit" disabled={buttonDisabled} onClick={apiPostService}>
+              Enviar Cadastro
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

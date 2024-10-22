@@ -17,36 +17,42 @@ import {
 } from "../ui/select"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { useNavigate } from "@tanstack/react-router"
-import { api, makeRequestProps } from "../../api/axios"
 import { apiService } from "../../api/api"
 import { CONST } from "../../const/Index"
-import { useEffect, useState } from "react"
+import {useState } from "react"
 import { AlunosDialog } from "./AlunosDialog"
+import { Iprofessor } from "../../const/Users.const"
+import { DialogClose } from "@radix-ui/react-dialog"
+import { toast } from "../../hooks/use-toast"
 
 interface paramsPost {
     nome: string,
     codigo_professor: number,
     data_inicio: string,
     data_fim: string,
+    codigo_alunos: number[]
 }
-interface Professor {
-    id_usuario: number,
-    codigo: string,
-    nome: string,
-    tipo: number
+interface listAlunos {
+    alunos: string[]
 }
 export const CreateMateriaDialog = () => {
 
-    const navigate = useNavigate({ from: '/materias' })
+    const [prefessores, setProfessores] = useState<Iprofessor[]>([])
     const [params, setParams] = useState<paramsPost>({
         nome: "",
         codigo_professor: 0,
         data_inicio: "",
         data_fim: "",
+        codigo_alunos: []
 
     })
-    const [prefessores, setProfessores] = useState<Professor[]>([])
+
+    const atualizarEstadoPai = (novoValor: listAlunos) => {
+        setParams((prevParams) => ({
+            ...prevParams,
+            codigo_alunos: novoValor.alunos.map(Number)
+        }));
+    };
 
     const getAllPreofessores = async () => {
 
@@ -57,43 +63,58 @@ export const CreateMateriaDialog = () => {
 
         setProfessores(data)
     }
-
-    const apiParams: makeRequestProps = {
-
-        method: CONST.HTTP.POST,
-        path: 'materias',
-        body: params
-    }
     const setInputValue = (e: any, inputName: string) => {
-        setParams({
-            ...params,
-            [inputName]: e.target.value,
+
+        if (inputName == "codigo_professor") {
+            setParams({
+                ...params,
+                [inputName]: parseInt(e),
+            })
+        }
+        else {
+            setParams({
+                ...params,
+                [inputName]: e.target.value,
+            })
+        }
+
+    }
+    const postNewMateria = async () => {
+
+        const data = await apiService().makeRequest({
+            method: CONST.HTTP.POST,
+            path: 'materias',
+            body: params
         })
-    }
-    const apicall = async () => {
 
-        const data = await apiService().makeRequest(apiParams)
-
-        console.log(data)
-        navigate({ to: '/materias' })
-    }
-
-    const getDateFomat = (): string => {
-
-        const TodayDate = new Date()
-
-        return `${TodayDate.getFullYear()}-${TodayDate.getMonth()}-${TodayDate.getDate()}}`
+        if (data.status == 200) {
+            console.log(data)
+            toast({
+              title: "Okay",
+              description: 'Tudo certo para fazer login',
+            })
+          }
+          else {
+            toast({
+              title: "Opss...",
+              description: 'Algo deu errado',
+              variant: "destructive"
+            })
+      
+            return;
+          }
 
     }
 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" onClick={async () => await getAllPreofessores()}>Adicionar Materia</Button>
+                <Button variant="outline" onClick={getAllPreofessores}>Adicionar Materia</Button>
             </DialogTrigger>
             <DialogContent className="px-10 max-w-[320px] pl-3 pr-3 rounded">
                 <DialogHeader>
                     <DialogTitle>Criar Materia</DialogTitle>
+                    <DialogDescription></DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-1 py-4">
                     <div className="">
@@ -106,21 +127,18 @@ export const CreateMateriaDialog = () => {
                         <Label htmlFor="cod-professor" className="text-right">
                             Nome Professor
                         </Label>
-                        <Select>
-                            <SelectTrigger className="w-full">
+                        <Select onValueChange={(e) => setInputValue(e, "codigo_professor")}>
+                            <SelectTrigger className="w-full" >
                                 <SelectValue placeholder="Professores" />
                             </SelectTrigger>
-                            <SelectContent>
-
+                            <SelectContent >
                                 {
                                     prefessores.map((professor) => (
-                                        <SelectItem value={professor.id_usuario.toString()}>{professor.nome}</SelectItem>
+                                        <SelectItem key={professor.id_usuario} value={professor.id_usuario.toString()}>{professor.nome}</SelectItem>
                                     ))
                                 }
                             </SelectContent>
                         </Select>
-
-                        {/* <Input onChange={(e) => setInputValue(e, "codigo_professor")} className="col-span-3" /> */}
                     </div>
                     <div className="">
                         <Label htmlFor="date-start" className="text-right">
@@ -138,11 +156,13 @@ export const CreateMateriaDialog = () => {
                         <Label htmlFor="alunos" className="text-right">
                             Alunos
                         </Label>
-                        <AlunosDialog />
+                        <AlunosDialog atualizarEstado={atualizarEstadoPai} />
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button type="submit" onClick={() => apicall()}> Adicionar Materia</Button>
+                    <DialogClose>
+                        <Button type="submit" onClick={postNewMateria}> Adicionar Materia</Button>
+                    </DialogClose>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

@@ -27,6 +27,7 @@ export class api {
     subpath,
     body,
   }: makeRequestProps) {
+    
     let url = path;
 
     if (subpath) url += `/${subpath}`
@@ -59,9 +60,11 @@ export class api {
     }
 
     if (method === 'PUT') {
-      const { data } = await this.api.put(path, body)
 
+      const data  = await this.api.put(url,body)
+      
       return data
+    
     }
 
     if (method === 'DELETE') {

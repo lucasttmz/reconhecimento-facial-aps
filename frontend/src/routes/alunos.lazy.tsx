@@ -1,95 +1,81 @@
 import { createLazyFileRoute, Link } from '@tanstack/react-router'
-import { makeRequestProps } from '../api/axios';
-import { apiService } from "../api/api";
+import { makeRequestProps } from '../api/axios'
+import { apiService } from '../api/api'
 import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "../components/ui/table"
-import { useEffect, useState } from 'react';
-import { CONST } from '../const/Index';
-import { SquarePen } from 'lucide-react';
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../components/ui/table'
+import { useEffect, useState } from 'react'
+import { CONST } from '../const/Index'
+import { SquarePen } from 'lucide-react'
+import { Ialuno } from '../const/Users.const'
 
 export const Route = createLazyFileRoute('/alunos')({
-    component: Alunos,
+  component: Alunos,
 })
 
-interface aluno {
-    id_usuario: number,
-    codigo: string,
-    nome: string,
-    tipo: number
-}
-
 function Alunos() {
+  const [carregando, setCarregando] = useState(true)
+  const [alunos, setAlunos] = useState<Ialuno[]>()
+  const apiParams: makeRequestProps = {
+    method: CONST.HTTP.GET,
+    path: 'alunos',
+  }
+  const getAllAlunos = async () => {
+    try {
+      const data = await apiService().makeRequest(apiParams)
 
-    const [carregando, setCarregando] = useState(true);
-    const [alunos, setAlunos] = useState<aluno[]>();
-    const apiParams: makeRequestProps = {
-        method: CONST.HTTP.GET,
-        path: 'alunos',
+      setAlunos(data)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setCarregando(false)
     }
-    const getAllAlunos = async () => {
+  }
 
-        try {
-            const data = await apiService().makeRequest(apiParams)
+  useEffect(() => {
+    getAllAlunos()
+  }, [])
 
-            setAlunos(data)
-        }
-        catch (err) {
-
-            console.log(err)
-        }
-        finally {
-            setCarregando(false);
-        }
-    }
-
-    useEffect(() => {
-
-        getAllAlunos()
-
-    }, [])
-
-    return (
-        <div className='p-2 border-solid border-black'>
-            <Table>
-                <TableCaption>Lista de Alunos</TableCaption>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-[100px] text-center">Cod. Aluno</TableHead>
-                        <TableHead>Nome</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-
-                    {
-                        carregando ? (
-                            <p>Carregado</p>
-                        ) : (
-
-                            alunos?.length ? (
-                                alunos.map((aluno) => (
-
-                                    <TableRow key={aluno.id_usuario}>
-                                        <TableCell>{aluno.codigo}</TableCell>
-                                        <TableCell>{aluno.nome}</TableCell>
-                                        <TableCell> <Link to='/aluno/$postId' params={{ postId: aluno.id_usuario.toString() }}><SquarePen color='green' /></Link> </TableCell>
-                                    </TableRow>
-
-                                ))
-                            ) : (
-                                <p></p>
-                            )
-                        )
-                    }
-                </TableBody>
-            </Table>
-        </div>
-    )
+  return (
+    <div className="p-2 border-solid border-black">
+      <Table>
+        <TableCaption>Lista de Alunos</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[100px] text-center">Cod. Aluno</TableHead>
+            <TableHead>Nome</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {carregando ? (
+            <p>Carregado</p>
+          ) : alunos?.length ? (
+            alunos.map((aluno) => (
+              <TableRow key={aluno.id_usuario}>
+                <TableCell>{aluno.codigo}</TableCell>
+                <TableCell>{aluno.nome}</TableCell>
+                <TableCell>
+                  {' '}
+                  <Link
+                    to="/aluno/$postId"
+                    params={{ postId: aluno.id_usuario.toString() }}
+                  >
+                    <SquarePen color="green" />
+                  </Link>{' '}
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <p></p>
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  )
 }
-

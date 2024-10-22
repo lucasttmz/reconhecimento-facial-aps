@@ -17,25 +17,22 @@ import {
 import { apiService } from "../../api/api"
 import { CONST } from "../../const/Index"
 import { useEffect, useState } from "react"
-
-
-interface aluno {
-  id_usuario: number,
-  codigo: string,
-  nome: string,
-  tipo: number
-}
-
+import { Ialuno } from "../../const/Users.const"
 
 const FormSchema = z.object({
   alunos: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to select at least one item.",
+    message: "Necessario ter pelo menos um aluno selecionado.",
   }),
 })
+interface listAlunos {
+  alunos: string[]
+}
+interface FilhoProps {
+  atualizarEstado: (novoValor: listAlunos) => void;
+}
+export function AlunosDialog({ atualizarEstado }:FilhoProps) {
 
-export function AlunosDialog() {
-
-  const [alunos, setAlunos] = useState<aluno[]>()
+  const [alunos, setAlunos] = useState<Ialuno[]>()
 
   const getAllAlunos = async () => {
     const data = await apiService().makeRequest({
@@ -45,6 +42,7 @@ export function AlunosDialog() {
 
     setAlunos(data)
   }
+  
   useEffect(() => {
     getAllAlunos()
   }, [])
@@ -57,7 +55,7 @@ export function AlunosDialog() {
   })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(JSON.stringify(data, null, 2))
+    atualizarEstado(data)
   }
 
   return (

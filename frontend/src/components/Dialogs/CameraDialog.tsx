@@ -104,7 +104,7 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages }: CameraDialogProps
               </DialogTitle>
             )
           ))}
-          <DialogDescription className='relative'>
+          <DialogDescription className='relative' style={{transform: 'scaleX(-1)'}}>
             <Webcam
               width={512}
               height={512}
