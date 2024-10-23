@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 
 class LoginSchema(BaseModel):
+    codigo: str
     fotos: list[str]
 
 
@@ -19,3 +20,8 @@ class UsuarioToken(BaseModel):
     sub: str
     user_id: int
     permissions: int
+
+
+class UsuarioRegistradoSchema(BaseModel):
+    codigo: str
+    nome: str

@@ -9,9 +9,8 @@ from jwt import encode, decode, DecodeError
 
 from sistema_escolar.controladores.biometria import BiometriaControle, USUARIO_NAO_RECONHECIDO
 from sistema_escolar.controladores.usuarios import UsuarioControle
-from sistema_escolar.modelos.autenticacao import RegistroSchema, Token
+from sistema_escolar.modelos.autenticacao import RegistroSchema, Token, UsuarioRegistradoSchema
 from sistema_escolar.modelos.usuario import TipoUsuario
-from sistema_escolar.modelos.genericos import MensagemSchema
 
 
 CHAVE = environ.get("CHAVE_TOKEN", "seta la a chave")
@@ -57,15 +56,22 @@ class AutenticacaoControle:
         
         return {"id": id_usuario, "nome": nome, "permissoes": permissoes}
 
-    def registrar_usuario(self, dados: RegistroSchema, biometria_controle: BiometriaControle) -> MensagemSchema:
+    def registrar_usuario(self, dados: RegistroSchema, biometria_controle: BiometriaControle) -> UsuarioRegistradoSchema:
         usuario_controle = UsuarioControle()
         proximo_id = usuario_controle.sequencia_usuario() + 1
         biometria_controle.registrar_rosto(dados.fotos, proximo_id)
 
-        return usuario_controle.criar_usuario(proximo_id, dados.nome)
+        return usuario_controle.criar_usuario(proximo_id, dados.nome.title())
 
-    def realizar_login(self, fotos: list[str], biometria: BiometriaControle) -> Token: 
-        id_usuario = biometria.realizar_biometria(fotos)
+    def realizar_login(self, codigo_esperado: str, fotos: list[str], biometria: BiometriaControle) -> Token: 
+        id_esperado = UsuarioControle().listar_id_usuario_por_codigo(codigo_esperado.upper())
+        if id_esperado == USUARIO_NAO_RECONHECIDO:
+            raise HTTPException(
+                status_code=HTTPStatus.UNAUTHORIZED, 
+                detail="Login falhou. Código inválido"
+            )
+
+        id_usuario = biometria.realizar_biometria(id_esperado, fotos)
         if id_usuario == USUARIO_NAO_RECONHECIDO:
             raise HTTPException(
                 status_code=HTTPStatus.UNAUTHORIZED, 

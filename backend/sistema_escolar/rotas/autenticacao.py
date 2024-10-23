@@ -6,8 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from sistema_escolar.controladores.autenticacao import AutenticacaoControle
 from sistema_escolar.controladores.biometria import BiometriaControle
-from sistema_escolar.modelos.autenticacao import LoginSchema, RegistroSchema, Token
-from sistema_escolar.modelos.genericos import MensagemSchema
+from sistema_escolar.modelos.autenticacao import LoginSchema, RegistroSchema, Token, UsuarioRegistradoSchema
 
 
 MODO_DEV = environ.get("DEV", "false").lower() in ("true", "1")
@@ -29,10 +28,10 @@ def login(dados: LoginSchema, autenticacao: T_AutenticacaoControle, biometria: T
         })
         return {"token": token, "tipo": "Bearer"}
 
-    return autenticacao.realizar_login(dados.fotos, biometria)
+    return autenticacao.realizar_login(dados.codigo, dados.fotos, biometria)
 
 
-@router.post("/registrar", response_model=MensagemSchema)
+@router.post("/registrar", response_model=UsuarioRegistradoSchema)
 def registrar(dados: RegistroSchema, controle: T_AutenticacaoControle, biometria: T_BiometriaControle):
     """Registra um novo usuário"""
 

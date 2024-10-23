@@ -33,6 +33,16 @@ class UsuarioDAO:
 
         return self._mapear_usuario(res)
 
+    def buscar_usuario_por_codigo(self, codigo: str) -> Usuario | None:
+        con = Conexao()
+        query = "SELECT * FROM usuario WHERE codigo = ?"
+        res = con.fetch_query(query, [codigo], TipoRetorno.FETCHONE)
+
+        if res is None or isinstance(res, list):
+            return None
+
+        return self._mapear_usuario(res)
+
     def todos_os_professores(self) -> list[Usuario] | None:
         con = Conexao()
         res = con.fetch_query(

@@ -15,7 +15,7 @@ USUARIO_NAO_RECONHECIDO = 0
 QTD_MINIMA_TREINAMENTO = 8
 
 class BiometriaControle():
-    def realizar_biometria(self, fotos: list[str]) -> int:
+    def realizar_biometria(self, id_esperado: int, fotos: list[str]) -> int:
         # Se nenhuma foto foi enviada (algo errado no front)
         if not fotos:
             raise HTTPException(
@@ -36,7 +36,7 @@ class BiometriaControle():
             if rosto is not None:
                 id_usuario = self.reconhecer_rosto(rosto)
 
-                if id_usuario != USUARIO_NAO_RECONHECIDO:
+                if id_usuario != USUARIO_NAO_RECONHECIDO and id_usuario == id_esperado:
                     return id_usuario
 
         return USUARIO_NAO_RECONHECIDO

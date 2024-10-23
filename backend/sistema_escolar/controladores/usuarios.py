@@ -3,6 +3,7 @@ import uuid
 
 from fastapi import HTTPException
 
+from sistema_escolar.modelos.autenticacao import UsuarioRegistradoSchema
 from sistema_escolar.modelos.usuario import UsuarioSchema, AtualizarUsuarioSchema
 from sistema_escolar.modelos.genericos import MensagemSchema
 from sistema_escolar.dal.usuarios import UsuarioDAO
@@ -57,6 +58,14 @@ class UsuarioControle:
         }
 
         return UsuarioSchema(**usuarioSchema)
+    
+    def listar_id_usuario_por_codigo(self, codigo: str) -> int:
+        usuarioDAO = UsuarioDAO()
+        usuario = usuarioDAO.buscar_usuario_por_codigo(codigo)
+        if usuario is None:
+            return 0
+        
+        return usuario.id_usuario
 
     def sequencia_usuario(self) -> int:
         usuarioDAO = UsuarioDAO()
@@ -65,11 +74,12 @@ class UsuarioControle:
     def gerar_codigo_usuario(self) -> str:
         return str(uuid.uuid4()).upper()[:8]
 
-    def criar_usuario(self, id_usuario: int, nome_usuario: str) -> MensagemSchema:
+    def criar_usuario(self, id_usuario: int, nome_usuario: str) -> UsuarioRegistradoSchema:
+        codigo = self.gerar_codigo_usuario()
         dados = {
             "id_usuario": id_usuario,
             "nome": nome_usuario,
-            "codigo": self.gerar_codigo_usuario(),
+            "codigo": codigo,
             "tipo": 1
         }
         usuarioDAO = UsuarioDAO()
@@ -78,7 +88,7 @@ class UsuarioControle:
         if not sucesso:
             raise HTTPException(HTTPStatus.NOT_FOUND)
 
-        return MensagemSchema(mensagem=f"{nome_usuario} registrado com sucesso!")
+        return UsuarioRegistradoSchema(codigo=codigo, nome=nome_usuario)
 
     def atualizar_usuario(self, id_usuario: int, usuario_atualizado: AtualizarUsuarioSchema) -> MensagemSchema:
         usuarioDAO = UsuarioDAO()
