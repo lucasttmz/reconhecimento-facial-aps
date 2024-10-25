@@ -1,12 +1,10 @@
 export interface Imateria {
-
     id_materia: number,
     nome: string,
     professor: Iprofessor
     data_inicio: string
     data_fim: string
     alunos: Ialuno[]
-
 }
 export interface Ialuno {
     id_usuario: number,
@@ -27,6 +25,18 @@ export interface ImateriaAluno {
         nome: string,
         tipo: number
     },
+    materia: {
+        id_materia: number,
+        nome: string,
+        professor: string,
+        data_inicio: string,
+        data_fim: string
+    },
+    nota: number,
+    faltas: number
+}
+
+interface ImateriaNota {
     materia: {
         id_materia: number,
         nome: string,

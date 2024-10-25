@@ -1,12 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { User } from 'lucide-react'
 import { apiService } from '../api/api'
 import { useEffect, useState } from 'react'
-import { ImateriaAluno } from '../const/Users.const'
-import { AlunoMateriaDialog } from '../components/Dialogs/AlunoMateriaDialog'
+import { useUserStore } from '../store/user'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
-import { User } from 'lucide-react'
-import { useUserStore } from '../store/user'
+import { ImateriaAluno } from '../const/Users.const'
+import { createFileRoute } from '@tanstack/react-router'
+import { AlunoMateriaDialog } from '../components/Dialogs/AlunoMateriaDialog'
+
 
 export const Route = createFileRoute('/materia/$postId/aluno/$alunoId')({
     component: MateriaAluno,
@@ -15,8 +16,9 @@ export const Route = createFileRoute('/materia/$postId/aluno/$alunoId')({
 function MateriaAluno() {
 
     const { postId, alunoId } = Route.useParams()
-    const {states:{user}} = useUserStore()
     const [alunoNotas, setAlunoNotas] = useState<ImateriaAluno>()
+    const {states:{user}} = useUserStore()
+    
 
     const getAlunoNotas = async () => {
 
@@ -37,7 +39,7 @@ function MateriaAluno() {
 
         <div>
             <div
-                className=' flex items-center min-h-[420px] flex-col p-2 gap-4 border border-solid rounded-xl m-10'
+                className='flex items-center min-h-[420px] flex-col p-2 gap-4 border border-solid rounded-xl m-10'
             >
                 <div className='flex justify-center h-full flex-col items-center gap-2'>
 
@@ -70,7 +72,9 @@ function MateriaAluno() {
                                     </p>
                                 </div>
                             </div>
-                            {user?.permissions == 2 ? <AlunoMateriaDialog postId={parseInt(postId)} alunoId={parseInt(alunoId)}/> : <span></span>}
+                            {user?.permissions == 2 && ( 
+                                <AlunoMateriaDialog postId={parseInt(postId)} alunoId={parseInt(alunoId)}/> 
+                            )}
                         </div>
                     </div>
                     <div className='w-full '> {/*Dados Materia*/}

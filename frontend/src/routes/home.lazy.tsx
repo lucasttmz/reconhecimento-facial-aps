@@ -35,17 +35,21 @@ function Home() {
 
         <p> Vocé é um {roleUser}! </p>
 
-        <div >
+        <div className='w-full'>
 
           {
+
             user?.permissions == 1 && (
-              <ButtonMenu nome='Boletim' Icone={() => <BookOpen color='#fff' />} rota='boletim' />
+              <div className=''>
+                <ButtonMenu nome='Boletim' Icone={() => <BookOpen color='#fff' />} rota='boletim' />
+              </div>
+
             )
           }
           {
             user?.permissions == 2 && (
 
-              <div className=''>
+              <div className='lg:flex'>
                 <ButtonMenu nome='Matéria' Icone={() => <Book color='#fff' />} rota='materias' />
                 <ButtonMenu nome='Alunos' Icone={() => <GraduationCap color='#fff' />} rota='alunos' />
               </div>
@@ -55,7 +59,7 @@ function Home() {
           {
             user?.permissions == 3 && (
 
-              <div className=''>
+              <div className='lg:flex gap-2'>
                 <ButtonMenu nome='Matéria' Icone={() => <Book color='#fff' />} rota='materias' />
                 <ButtonMenu nome='Alunos' Icone={() => <GraduationCap color='#fff' />} rota='alunos' />
                 <ButtonMenu nome='Professores' Icone={() => <User color='#fff' />} rota='professores' />

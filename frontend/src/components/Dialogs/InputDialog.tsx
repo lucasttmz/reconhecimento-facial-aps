@@ -36,7 +36,7 @@ export const InputDialog = () => {
     path: "registrar",
     method: "POST",
     body: {
-      nome: `${params.nome} ${params.sobrenome}`.toLowerCase(),
+      nome: `${params.nome} ${params.sobrenome}`,
       fotos: capturedImages
     }
   }
@@ -58,10 +58,24 @@ export const InputDialog = () => {
 
   const setInputValue = (e: any, inputName: string) => {
 
-    setParams({
-      ...params,
-      [inputName]: e.target.value,
-    })
+    if (inputName == 'nome' || inputName == 'sobrenome') {
+
+      let inputValue: string = e.target.value
+      inputValue = inputValue.replace(inputValue[0], inputValue[0].toUpperCase())
+
+      setParams({
+        ...params,
+        [inputName]: inputValue,
+      })
+    }
+    else {
+      setParams({
+        ...params,
+        [inputName]: e.target.value,
+      })
+    }
+
+
 
     if (params.nome != "" && params.sobrenome != "" && capturedImages.length == 10) {
       setButtonDisabled(false)
@@ -74,8 +88,9 @@ export const InputDialog = () => {
     if (data.status == 200) {
       console.log(data)
       toast({
-        title: "Okay",
+        title: `Bem vindo ${data.data.nome}!, Esse é o seu codigo de Usuário ${data.data.codigo}`,
         description: 'Tudo certo para fazer login',
+        duration: 15000
       })
     }
     else {
@@ -91,7 +106,9 @@ export const InputDialog = () => {
 
   return (
     <Dialog>
-      <DialogTrigger> Registar</DialogTrigger>
+      <DialogTrigger className="border border-solid rounded border-black">
+        <Button variant={"secondary"} className="hover:bg-gray-800 w-full hover:text-white"> Registrar </Button>
+      </DialogTrigger>
       <DialogContent className='px-10 max-w-[320px] rounded-xl'>
         <DialogHeader>
           <DialogTitle className="p-4"> Tela de Registro </DialogTitle>
@@ -114,6 +131,7 @@ export const InputDialog = () => {
                   <CameraDialog
                     onCaptureImages={handleCapturedImages}
                     trigerTitle='Cadastrar Rosto'
+                    codAluno=""
                   />
                   {
                     capturedImages.length == 10 && (

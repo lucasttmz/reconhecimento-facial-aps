@@ -2,6 +2,7 @@ import { createLazyFileRoute } from '@tanstack/react-router'
 
 import { CameraDialog } from '../components/Dialogs/CameraDialog';
 import { InputDialog } from '../components/Dialogs/InputDialog';
+import { RaDialog } from '../components/Dialogs/RaDialog';
 
 export const Route = createLazyFileRoute('/')({
   component: Index,
@@ -19,12 +20,10 @@ function Index() {
       </h3>
       
       <div 
-        className='flex flex-col gap-4 w-full'
+        className='flex flex-col gap-4 w-full lg:w-1/2'
       >
        
-          <CameraDialog
-            trigerTitle='Login'
-          />
+          <RaDialog/>
 
         
           <InputDialog/>

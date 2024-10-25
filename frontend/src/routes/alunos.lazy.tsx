@@ -14,6 +14,8 @@ import { useEffect, useState } from 'react'
 import { CONST } from '../const/Index'
 import { SquarePen } from 'lucide-react'
 import { Ialuno } from '../const/Users.const'
+import { useUserStore } from '../store/user'
+
 
 export const Route = createLazyFileRoute('/alunos')({
   component: Alunos,
@@ -22,6 +24,7 @@ export const Route = createLazyFileRoute('/alunos')({
 function Alunos() {
   const [carregando, setCarregando] = useState(true)
   const [alunos, setAlunos] = useState<Ialuno[]>()
+  const { states: { user } } = useUserStore()
   const apiParams: makeRequestProps = {
     method: CONST.HTTP.GET,
     path: 'alunos',
@@ -60,15 +63,18 @@ function Alunos() {
               <TableRow key={aluno.id_usuario}>
                 <TableCell>{aluno.codigo}</TableCell>
                 <TableCell>{aluno.nome}</TableCell>
-                <TableCell>
-                  {' '}
-                  <Link
-                    to="/aluno/$postId"
-                    params={{ postId: aluno.id_usuario.toString() }}
-                  >
-                    <SquarePen color="green" />
-                  </Link>{' '}
-                </TableCell>
+
+                {user?.permissions == 3 && (
+                  <TableCell>
+                    <Link
+                      to="/aluno/$postId"
+                      params={{ postId: aluno.id_usuario.toString()}}
+                    >
+                      <SquarePen color="green" />
+                    </Link>
+                  </TableCell>
+                )}
+
               </TableRow>
             ))
           ) : (

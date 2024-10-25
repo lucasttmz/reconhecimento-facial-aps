@@ -21,18 +21,23 @@ import { useToast } from "../../hooks/use-toast";
 interface CameraDialogProps {
   trigerTitle: string;
   onCaptureImages?: (images: string[]) => void;
+  codAluno: string
 }
 
-export const CameraDialog = ({ trigerTitle, onCaptureImages }: CameraDialogProps) => {
+export const CameraDialog = ({ trigerTitle, onCaptureImages, codAluno }: CameraDialogProps) => {
   const navigate = useNavigate({ from: '/' })
   const webcamRef = useRef<Webcam>(null);
   const videoConstraints = { facingMode: "user" };
   const onCaptureImagesR: boolean = onCaptureImages ? true : false;
   const { actions: { addUser } } = useUserStore()
   const { toast } = useToast()
-  const dataRequest = useCallback(async () => {
-    await getPhotos();
+  
+  const dataRequest = useCallback(async (codAluno:string) => {
+    console.log(codAluno)
+    await getPhotos(codAluno);
   }, []);
+
+  
 
   const apiCall: makeRequestProps = {
     method: CONST.HTTP.POST,
@@ -118,7 +123,7 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages }: CameraDialogProps
         <DialogFooter className='flex items-center justify-center '>
           <Button
             className='bg-gray-800 w-fit'
-            onClick={dataRequest}
+            onClick={()=> dataRequest(codAluno)}
           >
             {Object.keys(statusButton).map((key) => (
               statusButton[key] && (

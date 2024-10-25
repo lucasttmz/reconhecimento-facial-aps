@@ -24,6 +24,7 @@ import { AlunosDialog } from "./AlunosDialog"
 import { Iprofessor } from "../../const/Users.const"
 import { DialogClose } from "@radix-ui/react-dialog"
 import { toast } from "../../hooks/use-toast"
+import { Navigate, useNavigate } from "@tanstack/react-router"
 
 interface paramsPost {
     nome: string,
@@ -46,6 +47,7 @@ export const CreateMateriaDialog = () => {
         codigo_alunos: []
 
     })
+    const Navegate = useNavigate({from: '/materias'})
 
     const atualizarEstadoPai = (novoValor: listAlunos) => {
         setParams((prevParams) => ({
@@ -90,8 +92,7 @@ export const CreateMateriaDialog = () => {
         if (data.status == 200) {
             console.log(data)
             toast({
-              title: "Okay",
-              description: 'Tudo certo para fazer login',
+              title: data.data.mensagem,
             })
           }
           else {
@@ -102,8 +103,9 @@ export const CreateMateriaDialog = () => {
             })
       
             return;
-          }
-
+        }
+        window.location.reload()
+        Navigate({to: '/materias', params})
     }
 
     return (

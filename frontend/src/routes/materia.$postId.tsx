@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { makeRequestProps } from '../api/axios'
 import { useState, useEffect } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { apiService } from '../api/api'
 import { CONST } from '../const/Index'
 import {
@@ -21,6 +22,7 @@ export const Route = createFileRoute('/materia/$postId')({
 
 function Materia() {
   const { postId } = Route.useParams()
+  const navigate = useNavigate()
   const apiParams: makeRequestProps = {
     method: CONST.HTTP.GET,
     path: `materias`,
@@ -33,7 +35,6 @@ function Materia() {
   const getAluno = async () => {
     try {
       const data = await apiService().makeRequest(apiParams)
-      console.log(data)
       setMateria(data)
     } catch (err) {
     } finally {
@@ -47,12 +48,13 @@ function Materia() {
 
   return (
     <div>
-      <p>{materia?.nome}</p>
-      <p>
-        {materia?.professor.nome} : {materia?.professor.codigo}
-      </p>
-      <p>{materia?.data_inicio.split('-').reverse().join('/')}</p>
-      <p>{materia?.data_fim.split('-').reverse().join('/')}</p>
+      <div className='flex items-center flex-col'>
+        <p className='font-bold text-xl'>{materia?.nome}</p>
+        <p>Professor: {materia?.professor.nome}  {`[`}{materia?.professor.codigo}{`]`}</p>
+        <p>Data de Inicio: {materia?.data_inicio.split('-').reverse().join('/')}</p>
+        <p>Data de Encerramento: {materia?.data_fim.split('-').reverse().join('/')}</p>
+      </div>
+
 
       <div className="p-2 border-solid border-black">
         <Table>
@@ -63,7 +65,7 @@ function Materia() {
                 Cod. Aluno
               </TableHead>
               <TableHead> Nome </TableHead>
-              <TableHead> Vizualiazar Notas </TableHead>
+              <TableHead className='text-center'> Vizualiazar Notas </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -74,15 +76,13 @@ function Materia() {
                 <TableRow key={aluno.id_usuario}>
                   <TableCell>{aluno.codigo}</TableCell>
                   <TableCell>{aluno.nome}</TableCell>
-                  <TableCell>
-                    {' '}
+                  <TableCell className='flex justify-center'>
                     <Link
                       to="/materia/$postId/aluno/$alunoId"
-                      params={{ postId: materia.id_materia.toString(), alunoId: aluno.id_usuario.toString()}}
+                      params={{ postId: materia.id_materia.toString(), alunoId: aluno.id_usuario.toString() }}
                     >
-                      {' '}
                       <NotebookPen />
-                    </Link>{' '}
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))

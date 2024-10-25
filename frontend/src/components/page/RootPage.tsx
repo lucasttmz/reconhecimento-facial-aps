@@ -26,7 +26,7 @@ export const RootPage: React.FC = () => {
         <img
           src={Logo}
           alt="logo"
-          className="w-2/4 mx-auto"
+          className="max-w-64 mx-auto"
         />
       </Link>
 

@@ -15,7 +15,7 @@ export const CameraHook = ({ webcamRef, apiCall, onCaptureImagesR}: CameraHookPr
   const [responseData, setResponseData] = useState<unknown>();
   const arrayImagensRef = useRef<string[]>([]);
 
-  const getPhotos = async () => {
+  const getPhotos = async (codAluno:string) => {
     const timeToGetPhoto = 3000;
     const timeForUs = timeToGetPhoto / 10;
     let data;
@@ -46,6 +46,7 @@ export const CameraHook = ({ webcamRef, apiCall, onCaptureImagesR}: CameraHookPr
           data = await apiService().makeRequest({
             ...apiCall,
             body: {
+              codigo: codAluno,
               fotos: arrayImagensRef.current,
             },
           });

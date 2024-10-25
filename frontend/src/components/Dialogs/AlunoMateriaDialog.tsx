@@ -15,7 +15,6 @@ import {
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { toast } from "../../hooks/use-toast"
-import { useNavigate } from "@tanstack/react-router"
 
 interface Iparams {
   postId: number,
@@ -23,15 +22,13 @@ interface Iparams {
 }
 export function AlunoMateriaDialog({ postId, alunoId }: Iparams) {
 
-  const navigate = useNavigate({ from: '/materia/$postId/aluno/$alunoId' })
   const [notasFaltas, setNotasFaltas] = useState({
     faltas: 0,
     nota: 0,
   })
+  
 
   const postNotasFaltas = async () => {
-
-
     const data = await apiService().makeRequest({
       method: CONST.HTTP.PUT,
       path: `materias`,
@@ -92,7 +89,7 @@ export function AlunoMateriaDialog({ postId, alunoId }: Iparams) {
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button type="button" onClick={postNotasFaltas} variant="secondary"> Close </Button>
+            <Button type="button" onClick={postNotasFaltas} variant="secondary"> Lançar </Button>
           </DialogClose>
         </DialogFooter>
 
