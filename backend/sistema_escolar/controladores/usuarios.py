@@ -75,12 +75,14 @@ class UsuarioControle:
         return str(uuid.uuid4()).upper()[:8]
 
     def criar_usuario(self, id_usuario: int, nome_usuario: str) -> UsuarioRegistradoSchema:
+        # Primeiro usuário cadastrado é diretor, os demais são alunos
+        cargo = 1 if id_usuario > 1 else 3 
         codigo = self.gerar_codigo_usuario()
         dados = {
             "id_usuario": id_usuario,
             "nome": nome_usuario,
             "codigo": codigo,
-            "tipo": 1
+            "tipo": cargo
         }
         usuarioDAO = UsuarioDAO()
         sucesso = usuarioDAO.criar_usuario(UsuarioSchema(**dados))
