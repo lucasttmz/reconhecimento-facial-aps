@@ -14,41 +14,48 @@ from sistema_escolar.modelos.boletim import (
 )
 from sistema_escolar.modelos.genericos import MensagemSchema
 from sistema_escolar.modelos.usuario import TipoUsuario
-from sistema_escolar.controladores.autenticacao import possui_permissao, usuario_autenticado
+from sistema_escolar.controladores.autenticacao import (
+    possui_permissao,
+    usuario_autenticado,
+)
 from sistema_escolar.controladores.materias import MateriaControle
 from sistema_escolar.controladores.boletim import BoletimControle
 
-
-router = APIRouter(prefix="/materias", tags=["materias"])
+# Injeção de dependência dos controladores
 T_MateriaControle = Annotated[MateriaControle, Depends(MateriaControle)]
 T_BoletimControle = Annotated[BoletimControle, Depends(BoletimControle)]
+# Injeção de dependência do usuário que está autenticado atualmente
 T_Usuario = Annotated[dict[str, Any], Depends(usuario_autenticado)]
+# Declaração do roteador de matérias
+router = APIRouter(prefix="/materias", tags=["materias"])
 
 
 @router.get("/", response_model=Union[list[MateriaSchema], list[MateriaPublicSchema]])
 def todas_as_materias(controle: T_MateriaControle, usuario: T_Usuario):
     """Lista todas as matérias"""
 
+    # Checa se tem permissão para acessar rota
     if not possui_permissao(usuario, [TipoUsuario.PROFESSOR, TipoUsuario.DIRETOR]):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN)
-    
+
     # Diretor pode ver todas as materias
     if usuario.get("permissoes") == TipoUsuario.DIRETOR:
         return controle.listar_todas_materias()
-    
+
     # Professor somente ve as materias que ele ensina
     return controle.listar_todas_materias_do_professor(usuario.get("id", 0))
 
 
 @router.post("/", response_model=MensagemSchema)
 def criar_materia(
-    materia: CriarAtualizarMateriaSchema, 
-    mat_controle: T_MateriaControle, 
+    materia: CriarAtualizarMateriaSchema,
+    mat_controle: T_MateriaControle,
     bol_controle: T_BoletimControle,
-    usuario: T_Usuario
+    usuario: T_Usuario,
 ):
     """Cria uma nova matéria associada a um professor"""
 
+    # Checa se tem permissão para acessar rota
     if not possui_permissao(usuario, [TipoUsuario.DIRETOR]):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN)
 
@@ -59,9 +66,10 @@ def criar_materia(
 def pesquisar_materia(id_materia: int, controle: T_MateriaControle, usuario: T_Usuario):
     """Exibe informações da matéria e todos os alunos cursando ela"""
 
+    # Checa se tem permissão para acessar rota
     if not possui_permissao(usuario, [TipoUsuario.PROFESSOR, TipoUsuario.DIRETOR]):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN)
-    
+
     # Diretor pode ver todas as materias
     if usuario.get("permissoes") == TipoUsuario.DIRETOR:
         return controle.listar_materia(id_materia)
@@ -72,14 +80,15 @@ def pesquisar_materia(id_materia: int, controle: T_MateriaControle, usuario: T_U
 
 @router.put("/{id_materia}", response_model=MensagemSchema)
 def atualizar_materia(
-    id_materia: int, 
-    materia: CriarAtualizarMateriaSchema, 
-    mat_controle: T_MateriaControle, 
+    id_materia: int,
+    materia: CriarAtualizarMateriaSchema,
+    mat_controle: T_MateriaControle,
     bol_controle: T_BoletimControle,
-    usuario: T_Usuario
+    usuario: T_Usuario,
 ):
     """Cria uma nova matéria associada a um professor"""
 
+    # Checa se tem permissão para acessar rota
     if not possui_permissao(usuario, [TipoUsuario.DIRETOR]):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN)
 
@@ -88,21 +97,23 @@ def atualizar_materia(
 
 @router.get("/{id_materia}/aluno/{id_aluno}", response_model=BoletimParaProfessorSchema)
 def materia_do_aluno(
-    id_materia: int, 
-    id_aluno: int, 
+    id_materia: int,
+    id_aluno: int,
     boletim: T_BoletimControle,
     materia: T_MateriaControle,
-    usuario: T_Usuario
+    usuario: T_Usuario,
 ):
     """Exibe o boletim do aluno na matéria"""
 
+    # Checa se tem permissão para acessar rota
     if not possui_permissao(usuario, [TipoUsuario.PROFESSOR, TipoUsuario.DIRETOR]):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN)
-    
+
     # Professores somente podem ver matérias que ele ensina
-    if (
-        usuario.get("permissoes") == TipoUsuario.PROFESSOR
-        and not materia.professor_ensina_materia(usuario.get("id", 0), id_materia)
+    if usuario.get(
+        "permissoes"
+    ) == TipoUsuario.PROFESSOR and not materia.professor_ensina_materia(
+        usuario.get("id", 0), id_materia
     ):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN)
 
@@ -115,13 +126,14 @@ def lancar_nota_e_faltas(
     id_aluno: int,
     boletim: AtualizarBoletimSchema,
     controle: T_MateriaControle,
-    usuario: T_Usuario
+    usuario: T_Usuario,
 ):
     """Lançar nota e faltas para o aluno"""
 
+    # Checa se tem permissão para acessar rota
     if not possui_permissao(usuario, [TipoUsuario.PROFESSOR]):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN)
-    
+
     # Somente pode alterar matérias que ele ensina
     if not controle.professor_ensina_materia(usuario.get("id", 0), id_materia):
         raise HTTPException(status_code=HTTPStatus.FORBIDDEN)

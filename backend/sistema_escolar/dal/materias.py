@@ -1,14 +1,17 @@
+from datetime import datetime
+
+from sistema_escolar.dal.conexao import Conexao, TipoRetorno
 from sistema_escolar.modelos.materia import (
-    Materia,
     CriarAtualizarMateriaSchema,
+    Materia,
 )
 from sistema_escolar.modelos.usuario import Usuario
-from sistema_escolar.dal.conexao import Conexao, TipoRetorno
-from datetime import datetime
 
 
 class MateriaDAO:
     def sequencia_materia(self) -> int:
+        """Retorna o próximo ID da matéria"""
+
         con = Conexao()
         res = con.fetch_query(
             "SELECT MAX(id_materia) AS novo_id FROM materia", [], TipoRetorno.FETCHONE
@@ -17,45 +20,51 @@ class MateriaDAO:
         return int(res.get("novo_id", 0))  # type: ignore
 
     def listar_todas_materias(self) -> list[Materia] | None:
+        """Lista todas as matérias cadastradas"""
+
         con = Conexao()
         res = con.fetch_query("SELECT * FROM materia", [], TipoRetorno.FETCHALL)
-
         if res is None:
             return None
 
         return [self._mapear_materia(linha) for linha in res]
-    
+
     def listar_todas_materias_do_professor(self, id_prof: int) -> list[Materia] | None:
+        """Lista todas as matérias que associadas a um professor"""
+
         con = Conexao()
         query = "SELECT * FROM materia WHERE id_professor=?"
         res = con.fetch_query(query, [id_prof], TipoRetorno.FETCHALL)
-
         if res is None:
             return None
 
         return [self._mapear_materia(linha) for linha in res]
 
     def buscar_materia_id(self, id_materia: int) -> Materia | None:
+        """Busca uma matéria por seu ID"""
+
         con = Conexao()
         query = "SELECT * FROM materia WHERE id_materia = ?"
         res = con.fetch_query(query, [id_materia], TipoRetorno.FETCHONE)
-
         if res is None or isinstance(res, list):
             return None
 
         return self._mapear_materia(res)
-    
+
     def buscar_materia_professor(self, id_materia: int, id_prof: int) -> Materia | None:
+        """Busca uma matéria associada a um professor por seu id"""
+
         con = Conexao()
         query = "SELECT * FROM materia WHERE id_materia = ? and id_professor = ?"
         res = con.fetch_query(query, [id_materia, id_prof], TipoRetorno.FETCHONE)
-
         if res is None or isinstance(res, list):
             return None
 
         return self._mapear_materia(res)
-    
+
     def _mapear_materia(self, linha) -> Materia:
+        """Mapeia os dados do BD para Materia"""
+
         materia = {
             "id_materia": linha.get("id_materia", 0),
             "id_professor": linha.get("id_professor", 0),
@@ -70,8 +79,9 @@ class MateriaDAO:
 
         return Materia(**materia)
 
-    
     def buscar_alunos_em_materia(self, id_materia: int) -> list[Usuario] | None:
+        """Busca todos alunos cursando uma matéria"""
+
         con = Conexao()
         query = """
             SELECT u.*
@@ -80,10 +90,10 @@ class MateriaDAO:
             WHERE b.id_materia = ?
         """
         res = con.fetch_query(query, [id_materia], TipoRetorno.FETCHALL)
-
         if res is None:
             return None
-        
+
+        # Mapeia o professor
         resultado = []
         for row in res:
             professor = {
@@ -99,10 +109,18 @@ class MateriaDAO:
     def criar_materia(
         self, id_professor: int, nova_materia: CriarAtualizarMateriaSchema
     ) -> int:
+        """Cria nova matéria no banco de dados"""
+
         seq: int = self.sequencia_materia() + 1
         con = Conexao()
         query = "INSERT INTO materia VALUES (?, ?, ?, ?, ?)"
-        params = [seq, nova_materia.nome, id_professor, nova_materia.data_inicio, nova_materia.data_fim]
+        params = [
+            seq,
+            nova_materia.nome,
+            id_professor,
+            nova_materia.data_inicio,
+            nova_materia.data_fim,
+        ]
         con.dml_query(query, params)
 
         return seq
@@ -110,8 +128,9 @@ class MateriaDAO:
     def atualizar_materia(
         self, id_materia: int, id_professor: int, materia: CriarAtualizarMateriaSchema
     ) -> int:
-        con = Conexao()
+        """Atualiza dados de uma matéria no banco de dados"""
 
+        con = Conexao()
         query = """
             UPDATE materia 
             SET 
@@ -121,8 +140,13 @@ class MateriaDAO:
                 data_fim = ?
             WHERE id_materia = ?
         """
-        params = [id_professor, materia.nome, materia.data_inicio, materia.data_fim, id_materia]
-
+        params = [
+            id_professor,
+            materia.nome,
+            materia.data_inicio,
+            materia.data_fim,
+            id_materia,
+        ]
         if not con.dml_query(query, params):
             return 0
 
@@ -131,13 +155,17 @@ class MateriaDAO:
     def atualizar_notas_faltas(
         self, id_materia: int, id_aluno: int, nota: float | None, faltas: float | None
     ) -> int:
+        """Atualiza notas e faltas de um aluno"""
+
         con = Conexao()
+        # Primeiro checa se o aluno está cursando a matéria
         query = "SELECT 1 FROM boletim WHERE id_usuario = ? AND id_materia = ?"
         params = [id_aluno, id_materia]
         cursando_materia = con.fetch_query(query, params, TipoRetorno.FETCHONE)
         if not cursando_materia:
             return 0
 
+        # Atualiza as notas e faltas
         query = """
             UPDATE boletim
             SET 
@@ -148,7 +176,6 @@ class MateriaDAO:
             AND id_usuario = ?
         """
         params = [nota, faltas, id_materia, id_aluno]
-
         if not con.dml_query(query, params):
             return 0
 

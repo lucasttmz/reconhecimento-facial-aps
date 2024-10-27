@@ -1,11 +1,13 @@
-from pydantic import BaseModel
-
 from datetime import date
+
+from pydantic import BaseModel
 
 from sistema_escolar.modelos.usuario import UsuarioSchema
 
 
 class Materia(BaseModel):
+    """Modelo da Materia no BD"""
+
     id_materia: int
     id_professor: int
     nome: str
@@ -14,6 +16,8 @@ class Materia(BaseModel):
 
 
 class MateriaSchema(BaseModel):
+    """Dados retornados da matéria com dados dos alunos e professor"""
+
     id_materia: int
     nome: str
     professor: UsuarioSchema
@@ -23,6 +27,8 @@ class MateriaSchema(BaseModel):
 
 
 class CriarAtualizarMateriaSchema(BaseModel):
+    """Dados necessários p/ atualizar ou criar uma matéria"""
+
     nome: str
     codigo_professor: int
     data_inicio: date
@@ -31,7 +37,8 @@ class CriarAtualizarMateriaSchema(BaseModel):
 
 
 class MateriaPublicSchema(BaseModel):
-    """Matéria sem os dados do professor e alunos"""
+    """Dados retornados da matéria sem dados dos alunos"""
+
     id_materia: int
     nome: str
     professor: str
