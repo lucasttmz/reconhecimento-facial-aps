@@ -10,7 +10,7 @@ def test_aluno_pode_acessar_boletim(aluno, cliente):
 
 
 def test_aluno_nao_pode_acessar_rotas_de_materias(
-        aluno, cliente, materia_valida, notas_e_faltas
+    aluno, cliente, materia_valida, notas_e_faltas
 ):
     resposta = cliente.get("http://127.0.0.1:8000/materias/", headers=aluno)
     assert resposta.status_code == HTTPStatus.FORBIDDEN
@@ -84,7 +84,8 @@ def test_professor_pode_acessar_seus_alunos(professor, cliente):
 
 def test_professor_nao_pode_acessar_alunos_que_ele_nao_da_aula(professor, cliente):
     resposta = cliente.get(
-        "http://127.0.0.1:8000/materias/2/aluno/6", headers=professor)
+        "http://127.0.0.1:8000/materias/2/aluno/6", headers=professor
+    )
     assert resposta.status_code == HTTPStatus.FORBIDDEN
 
 

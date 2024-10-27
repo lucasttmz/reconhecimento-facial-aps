@@ -40,7 +40,7 @@ def materia_valida():
         "codigo_professor": 15,
         "data_inicio": "2024-10-18",
         "data_fim": "2024-10-18",
-        "codigo_alunos": []
+        "codigo_alunos": [],
     }
 
 
@@ -58,7 +58,7 @@ def alteracao_de_cargo():
 def imagem_base64():
     # Imagem de um pixel só para ser válida
     imagem = np.array([[[0, 0, 255]]], dtype=np.uint8)
-    _, buffer = cv2.imencode('.jpg', imagem)
-    imagem_base64 = base64.b64encode(buffer).decode('utf-8')
+    _, buffer = cv2.imencode(".jpg", imagem)
+    imagem_base64 = base64.b64encode(buffer).decode("utf-8")
 
     return f"data:image/jpeg;base64,{imagem_base64}"

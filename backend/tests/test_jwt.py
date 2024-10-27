@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from fastapi.security import  HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials
 import pytest
 
 from http import HTTPStatus
@@ -35,11 +35,9 @@ def test_jwt_invalido():
     controle = AutenticacaoControle()
 
     with pytest.raises(HTTPException) as exc:
-        controle.decodificar_token(HTTPAuthorizationCredentials(
-            credentials="token invalido", scheme="Bearer"
-        ))
-        
+        controle.decodificar_token(
+            HTTPAuthorizationCredentials(credentials="token invalido", scheme="Bearer")
+        )
+
         assert exc.value.args[0] == HTTPStatus.UNAUTHORIZED
         assert exc.value.args[1] == "Token inválido ou expirado"
-
-    
