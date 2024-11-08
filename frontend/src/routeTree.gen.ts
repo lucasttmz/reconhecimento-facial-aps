@@ -14,6 +14,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as MateriaPostIdImport } from './routes/materia.$postId'
+import { Route as BoletimMateriaIdImport } from './routes/boletim_.$materiaId'
 import { Route as AlunoPostIdImport } from './routes/aluno.$postId'
 import { Route as MateriaPostIdAlunoAlunoIdImport } from './routes/materia_.$postId.aluno.$alunoId'
 
@@ -60,6 +61,11 @@ const IndexLazyRoute = IndexLazyImport.update({
 
 const MateriaPostIdRoute = MateriaPostIdImport.update({
   path: '/materia/$postId',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BoletimMateriaIdRoute = BoletimMateriaIdImport.update({
+  path: '/boletim/$materiaId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -126,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlunoPostIdImport
       parentRoute: typeof rootRoute
     }
+    '/boletim/$materiaId': {
+      id: '/boletim/$materiaId'
+      path: '/boletim/$materiaId'
+      fullPath: '/boletim/$materiaId'
+      preLoaderRoute: typeof BoletimMateriaIdImport
+      parentRoute: typeof rootRoute
+    }
     '/materia/$postId': {
       id: '/materia/$postId'
       path: '/materia/$postId'
@@ -153,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/materias': typeof MateriasLazyRoute
   '/professores': typeof ProfessoresLazyRoute
   '/aluno/$postId': typeof AlunoPostIdRoute
+  '/boletim/$materiaId': typeof BoletimMateriaIdRoute
   '/materia/$postId': typeof MateriaPostIdRoute
   '/materia/$postId/aluno/$alunoId': typeof MateriaPostIdAlunoAlunoIdRoute
 }
@@ -165,6 +179,7 @@ export interface FileRoutesByTo {
   '/materias': typeof MateriasLazyRoute
   '/professores': typeof ProfessoresLazyRoute
   '/aluno/$postId': typeof AlunoPostIdRoute
+  '/boletim/$materiaId': typeof BoletimMateriaIdRoute
   '/materia/$postId': typeof MateriaPostIdRoute
   '/materia/$postId/aluno/$alunoId': typeof MateriaPostIdAlunoAlunoIdRoute
 }
@@ -178,6 +193,7 @@ export interface FileRoutesById {
   '/materias': typeof MateriasLazyRoute
   '/professores': typeof ProfessoresLazyRoute
   '/aluno/$postId': typeof AlunoPostIdRoute
+  '/boletim/$materiaId': typeof BoletimMateriaIdRoute
   '/materia/$postId': typeof MateriaPostIdRoute
   '/materia/$postId/aluno/$alunoId': typeof MateriaPostIdAlunoAlunoIdRoute
 }
@@ -192,6 +208,7 @@ export interface FileRouteTypes {
     | '/materias'
     | '/professores'
     | '/aluno/$postId'
+    | '/boletim/$materiaId'
     | '/materia/$postId'
     | '/materia/$postId/aluno/$alunoId'
   fileRoutesByTo: FileRoutesByTo
@@ -203,6 +220,7 @@ export interface FileRouteTypes {
     | '/materias'
     | '/professores'
     | '/aluno/$postId'
+    | '/boletim/$materiaId'
     | '/materia/$postId'
     | '/materia/$postId/aluno/$alunoId'
   id:
@@ -214,6 +232,7 @@ export interface FileRouteTypes {
     | '/materias'
     | '/professores'
     | '/aluno/$postId'
+    | '/boletim/$materiaId'
     | '/materia/$postId'
     | '/materia/$postId/aluno/$alunoId'
   fileRoutesById: FileRoutesById
@@ -227,6 +246,7 @@ export interface RootRouteChildren {
   MateriasLazyRoute: typeof MateriasLazyRoute
   ProfessoresLazyRoute: typeof ProfessoresLazyRoute
   AlunoPostIdRoute: typeof AlunoPostIdRoute
+  BoletimMateriaIdRoute: typeof BoletimMateriaIdRoute
   MateriaPostIdRoute: typeof MateriaPostIdRoute
   MateriaPostIdAlunoAlunoIdRoute: typeof MateriaPostIdAlunoAlunoIdRoute
 }
@@ -239,6 +259,7 @@ const rootRouteChildren: RootRouteChildren = {
   MateriasLazyRoute: MateriasLazyRoute,
   ProfessoresLazyRoute: ProfessoresLazyRoute,
   AlunoPostIdRoute: AlunoPostIdRoute,
+  BoletimMateriaIdRoute: BoletimMateriaIdRoute,
   MateriaPostIdRoute: MateriaPostIdRoute,
   MateriaPostIdAlunoAlunoIdRoute: MateriaPostIdAlunoAlunoIdRoute,
 }
@@ -262,6 +283,7 @@ export const routeTree = rootRoute
         "/materias",
         "/professores",
         "/aluno/$postId",
+        "/boletim/$materiaId",
         "/materia/$postId",
         "/materia/$postId/aluno/$alunoId"
       ]
@@ -286,6 +308,9 @@ export const routeTree = rootRoute
     },
     "/aluno/$postId": {
       "filePath": "aluno.$postId.tsx"
+    },
+    "/boletim/$materiaId": {
+      "filePath": "boletim_.$materiaId.tsx"
     },
     "/materia/$postId": {
       "filePath": "materia.$postId.tsx"

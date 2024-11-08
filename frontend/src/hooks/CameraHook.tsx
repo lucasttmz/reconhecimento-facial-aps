@@ -50,9 +50,10 @@ export const CameraHook = ({ webcamRef, apiCall, onCaptureImagesR}: CameraHookPr
               fotos: arrayImagensRef.current,
             },
           });
-          
+          console.log(data)
           setResponseData(data);
         } catch (error) {
+          console.log(error)
           setArrayImagens([])
           setResponseData({ error: true });
         }

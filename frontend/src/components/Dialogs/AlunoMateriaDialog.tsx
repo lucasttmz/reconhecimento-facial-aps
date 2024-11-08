@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { apiService } from "../../api/api"
 import { CONST } from "../../const/Index"
 import { Button } from "../ui/button"
@@ -19,40 +19,51 @@ import { toast } from "../../hooks/use-toast"
 interface Iparams {
   postId: number,
   alunoId: number
+  ataulizarNotas: (atualizar:boolean)=> void
+  notaFaltaAtual: {
+    nota: number | undefined
+    falta: number | undefined
+  }
 }
-export function AlunoMateriaDialog({ postId, alunoId }: Iparams) {
+export function AlunoMateriaDialog({ postId, alunoId, ataulizarNotas, notaFaltaAtual }: Iparams) {
 
   const [notasFaltas, setNotasFaltas] = useState({
-    faltas: 0,
-    nota: 0,
+    faltas: notaFaltaAtual.falta,
+    nota: notaFaltaAtual.nota,
   })
-  
 
   const postNotasFaltas = async () => {
-    const data = await apiService().makeRequest({
-      method: CONST.HTTP.PUT,
-      path: `materias`,
-      subpath: `${postId}/aluno/${alunoId}`,
-      body: {
-        faltas: notasFaltas.faltas,
-        nota: notasFaltas.nota
-      }
-    })
 
-    if (data.status == 200) {
+    try {
+
+      const data = await apiService().makeRequest({
+        method: CONST.HTTP.PUT,
+        path: `materias`,
+        subpath: `${postId}/aluno/${alunoId}`,
+        body: {
+          faltas: notasFaltas.faltas,
+          nota: notasFaltas.nota
+        }
+      })
+
       toast({
         title: 'Nota e Falta Lançadas',
         description: data.data.mensagem
       })
-    }
-    else {
+      ataulizarNotas(true)
+
+    } catch (error:any) {
+
       toast({
         title: 'Erro ao lançar nota e falta',
-        description: data.response.data.detail[0].msg,
-        variant: "destructive"
+        description: error?.response.data.detail[0].msg,
+        variant: "destructive",
+        duration: 10000
       })
+
     }
-    
+
+
   }
 
   return (
@@ -71,14 +82,14 @@ export function AlunoMateriaDialog({ postId, alunoId }: Iparams) {
         <div className="flex items-center space-x-2">
 
           <div >
-            <Label htmlFor="nome">
+            <Label htmlFor="Nota">
               Nota
             </Label>
             <Input onChange={(e) => setNotasFaltas({ ...notasFaltas, ['nota']: parseInt(e.target.value) })} type="number" />
 
           </div>
           <div >
-            <Label htmlFor="nome">
+            <Label htmlFor="Faltas">
               Faltas
             </Label>
             <Input onChange={(e) => setNotasFaltas({ ...notasFaltas, ['faltas']: parseInt(e.target.value) })} type="number" />

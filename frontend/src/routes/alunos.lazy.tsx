@@ -50,9 +50,14 @@ function Alunos() {
       <Table>
         <TableCaption>Lista de Alunos</TableCaption>
         <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px] text-center">Cod. Aluno</TableHead>
-            <TableHead>Nome</TableHead>
+          <TableRow className="bg-blue-700 pointer-events-none">
+            <TableHead className=" text-white w-[100px]">Cod. Aluno</TableHead>
+            <TableHead className='text-white'>Nome</TableHead>
+            {
+              user?.permissions == 3 && 
+                <TableHead className='text-white w-[100px] text-center'> Editar Aluno
+                </TableHead>
+            }
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -68,7 +73,7 @@ function Alunos() {
                   <TableCell>
                     <Link
                       to="/aluno/$postId"
-                      params={{ postId: aluno.id_usuario.toString()}}
+                      params={{ postId: aluno.id_usuario.toString() }}
                     >
                       <SquarePen color="green" />
                     </Link>

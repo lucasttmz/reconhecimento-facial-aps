@@ -17,19 +17,23 @@ function MateriaAluno() {
 
     const { postId, alunoId } = Route.useParams()
     const [alunoNotas, setAlunoNotas] = useState<ImateriaAluno>()
-    const {states:{user}} = useUserStore()
-    
+    const { states: { user } } = useUserStore()
 
-    const getAlunoNotas = async () => {
+
+    const getAlunoNotas = async () => {   // Chamada da API
 
         const data = await apiService().makeRequest({
             method: 'GET',
             path: `materias`,
             subpath: `${postId}/aluno/${alunoId}`
         })
-        console.log(data)
         setAlunoNotas(data)
     }
+
+    const atualizarNotas = (atualizar: boolean) => { // Função passada para o componente Filho para chamar novamente a API 
+        if (atualizar) { getAlunoNotas() }
+    }
+
     useEffect(() => {
         getAlunoNotas()
     }, [])
@@ -39,7 +43,7 @@ function MateriaAluno() {
 
         <div>
             <div
-                className='flex items-center min-h-[420px] flex-col p-2 gap-4 border border-solid rounded-xl m-10'
+                className='flex items-center min-h-[420px] flex-col p-2 gap-3 border border-solid rounded-xl m-10 shadow-lg'
             >
                 <div className='flex justify-center h-full flex-col items-center gap-2'>
 
@@ -67,20 +71,31 @@ function MateriaAluno() {
                                 </div>
                                 <div className='w-16 h-16 flex flex-col items-center rounded-md ' >
                                     <p className='font-bold'> Faltas </p>
-                                    <p className={alunoNotas?.faltas ? 'font-bold text-green-500 text-3xl' : 'font-bold text-red-500 text-3xl'}>
-                                        {alunoNotas?.faltas}
-                                    </p>
+                                    {
+                                        alunoNotas?.faltas == undefined ?
+                                            <p className='font-bold'> N/L </p> :
+                                            <p className={alunoNotas?.faltas <= 3 ? 'font-bold text-green-500 text-3xl' : 'font-bold text-red-500 text-3xl'}>
+                                                {alunoNotas?.faltas}
+                                            </p>
+                                    }
                                 </div>
                             </div>
-                            {user?.permissions == 2 && ( 
-                                <AlunoMateriaDialog postId={parseInt(postId)} alunoId={parseInt(alunoId)}/> 
-                            )}
+                            {
+                                user?.permissions == 2 && ( // Verifica O acesso de professor para lançar Notas
+                                    <AlunoMateriaDialog 
+                                        notaFaltaAtual={{falta: alunoNotas?.faltas,nota: alunoNotas?.nota}} 
+                                        ataulizarNotas={atualizarNotas} 
+                                        postId={parseInt(postId)} 
+                                        alunoId={parseInt(alunoId)} 
+                                    />
+                                )
+                            }
                         </div>
                     </div>
                     <div className='w-full '> {/*Dados Materia*/}
                         <div className='p-3'>
                             <div>
-                                <Label>Materia</Label>
+                                <Label>Matéria</Label>
                                 <Input className='bg-white' value={alunoNotas?.materia.nome} />
                             </div>
 
@@ -99,8 +114,6 @@ function MateriaAluno() {
                 </div>
             </div>
         </div>
-
-
 
     )
 }

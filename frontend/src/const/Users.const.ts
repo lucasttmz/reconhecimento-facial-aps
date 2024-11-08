@@ -32,11 +32,11 @@ export interface ImateriaAluno {
         data_inicio: string,
         data_fim: string
     },
-    nota: number,
+    nota: number | undefined,
     faltas: number
 }
 
-interface ImateriaNota {
+export interface ImateriaNota {
     materia: {
         id_materia: number,
         nome: string,

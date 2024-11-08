@@ -1,6 +1,4 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
-
-import { CameraDialog } from '../components/Dialogs/CameraDialog';
 import { InputDialog } from '../components/Dialogs/InputDialog';
 import { RaDialog } from '../components/Dialogs/RaDialog';
 
@@ -22,12 +20,8 @@ function Index() {
       <div 
         className='flex flex-col gap-4 w-full lg:w-1/2'
       >
-       
           <RaDialog/>
-
-        
           <InputDialog/>
-        
       </div>
     </section>
   )

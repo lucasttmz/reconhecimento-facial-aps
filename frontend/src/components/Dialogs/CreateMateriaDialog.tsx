@@ -24,7 +24,6 @@ import { AlunosDialog } from "./AlunosDialog"
 import { Iprofessor } from "../../const/Users.const"
 import { DialogClose } from "@radix-ui/react-dialog"
 import { toast } from "../../hooks/use-toast"
-import { Navigate, useNavigate } from "@tanstack/react-router"
 
 interface paramsPost {
     nome: string,
@@ -36,7 +35,10 @@ interface paramsPost {
 interface listAlunos {
     alunos: string[]
 }
-export const CreateMateriaDialog = () => {
+interface ICreateMateriaDialog{
+    AtualizarMaterias: (atualizar: boolean)=> void
+}
+export const CreateMateriaDialog = ({AtualizarMaterias}:ICreateMateriaDialog) => {
 
     const [prefessores, setProfessores] = useState<Iprofessor[]>([])
     const [params, setParams] = useState<paramsPost>({
@@ -47,7 +49,6 @@ export const CreateMateriaDialog = () => {
         codigo_alunos: []
 
     })
-    const Navegate = useNavigate({from: '/materias'})
 
     const atualizarEstadoPai = (novoValor: listAlunos) => {
         setParams((prevParams) => ({
@@ -83,29 +84,34 @@ export const CreateMateriaDialog = () => {
     }
     const postNewMateria = async () => {
 
-        const data = await apiService().makeRequest({
-            method: CONST.HTTP.POST,
-            path: 'materias',
-            body: params
-        })
+        try {
+            
+            const data = await apiService().makeRequest({
+                method: CONST.HTTP.POST,
+                path: 'materias',
+                body: params
+            })
+            
+            if (data.status == 200) {
+                console.log(data)
+                toast({
+                  title: data.data.mensagem,
+                })
+            }
 
-        if (data.status == 200) {
-            console.log(data)
+            AtualizarMaterias(true)
+
+        } catch (error:any) {
+
+            console.log(error)
             toast({
-              title: data.data.mensagem,
-            })
-          }
-          else {
-            toast({
-              title: "Opss...",
-              description: 'Algo deu errado',
-              variant: "destructive"
-            })
-      
-            return;
+                title: "Opss...",
+                description: error?.response.data.detail[0].msg,
+                variant: "destructive"
+              })
         }
-        window.location.reload()
-        Navigate({to: '/materias', params})
+        
+        
     }
 
     return (

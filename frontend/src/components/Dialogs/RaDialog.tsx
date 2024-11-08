@@ -17,9 +17,7 @@ export const RaDialog = () => {
 
     const [codAluno, setCodAluno] = useState<string>('')
 
-
     return (
-
 
         <Dialog>
             <DialogTrigger asChild className="bg-slate-900 text-white p-2 rounded font-bold">

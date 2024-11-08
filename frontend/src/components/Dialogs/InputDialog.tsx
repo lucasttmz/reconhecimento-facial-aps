@@ -88,10 +88,11 @@ export const InputDialog = () => {
     if (data.status == 200) {
       console.log(data)
       toast({
-        title: `Bem vindo ${data.data.nome}!, Esse é o seu codigo de Usuário ${data.data.codigo}`,
-        description: 'Tudo certo para fazer login',
+        title: `Olá ${data.data.nome}!, Esse é o seu codigo de Usuário ${data.data.codigo}`,
+        description: 'Código copiado para a área de Trabalho',
         duration: 15000
       })
+      navigator.clipboard.writeText(data.data.codigo);
     }
     else {
       toast({

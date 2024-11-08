@@ -31,56 +31,61 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages, codAluno }: CameraD
   const onCaptureImagesR: boolean = onCaptureImages ? true : false;
   const { actions: { addUser } } = useUserStore()
   const { toast } = useToast()
-  
-  const dataRequest = useCallback(async (codAluno:string) => {
+
+  const dataRequest = useCallback(async (codAluno: string) => {
     console.log(codAluno)
-    await getPhotos(codAluno);
+    await getPhotos(codAluno.toLocaleUpperCase());
   }, []);
 
-  
+
 
   const apiCall: makeRequestProps = {
     method: CONST.HTTP.POST,
     path: 'login',
   }
-  
-  const {authenticating, toggleIsAuthenticating, getPhotos, arrayImagens, responseData} = CameraHook({ webcamRef, apiCall, onCaptureImagesR});
-  
-  
+
+  const { authenticating, toggleIsAuthenticating, getPhotos, arrayImagens, responseData } = CameraHook({ webcamRef, apiCall, onCaptureImagesR });
+
+
   useEffect(() => {
     if (onCaptureImages) {
       onCaptureImages(arrayImagens)
     }
-    
+
   }, [arrayImagens, onCaptureImages]);
 
   useEffect(() => {
-    if(!responseData) return
-    if (responseData?.error as unknown) {
+    if (!responseData) return
+
+    if (responseData?.response as unknown) {
       toggleIsAuthenticating()
       toast({
-        title: "Oops...",
+        title: responseData.response.data.detail,
         description: 'Algo deu errado',
         variant: "destructive"
       })
 
-      console.log('caiu aqui')
+      console.log(responseData)
       return;
     }
-    
-    console.log(responseData)
-    const { data } = responseData as { data: { token: string, tipo: string, message: string } };
+    else {
 
-    if (data.token) {
-      localStorage.setItem('token', data.token);
+      console.log(responseData)
+      const { data } = responseData as { data: { token: string, tipo: string, message: string } };
 
-      addUser(data.token)
+      if (data.token) {
+        localStorage.setItem('token', data.token);
 
-      navigate({ to: '/home' });
+        addUser(data.token)
+
+        navigate({ to: '/home' });
+      }
     }
+
+
   }, [responseData]);
-  
-  
+
+
   const statusButton: { [key: string]: boolean } = {
     'Autenticando': authenticating,
     'Iniciar': !authenticating,
@@ -93,7 +98,7 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages, codAluno }: CameraD
 
   return (
     <Dialog>
-      <DialogTrigger 
+      <DialogTrigger
         className="bg-slate-900 text-white p-2 rounded font-bold"
       >{trigerTitle}
       </DialogTrigger>
@@ -109,7 +114,7 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages, codAluno }: CameraD
               </DialogTitle>
             )
           ))}
-          <DialogDescription className='relative' style={{transform: 'scaleX(-1)'}}>
+          <DialogDescription className='relative' style={{ transform: 'scaleX(-1)' }}>
             <Webcam
               width={512}
               height={512}
@@ -123,7 +128,7 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages, codAluno }: CameraD
         <DialogFooter className='flex items-center justify-center '>
           <Button
             className='bg-gray-800 w-fit'
-            onClick={()=> dataRequest(codAluno)}
+            onClick={() => dataRequest(codAluno)}
           >
             {Object.keys(statusButton).map((key) => (
               statusButton[key] && (

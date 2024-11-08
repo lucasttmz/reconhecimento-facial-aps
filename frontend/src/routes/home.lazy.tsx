@@ -40,16 +40,19 @@ function Home() {
           {
 
             user?.permissions == 1 && (
-              <div className=''>
+
+              <div className='lg:flex gap-2'>
                 <ButtonMenu nome='Boletim' Icone={() => <BookOpen color='#fff' />} rota='boletim' />
               </div>
+
+              
 
             )
           }
           {
             user?.permissions == 2 && (
 
-              <div className='lg:flex'>
+              <div className='lg:flex gap-2'>
                 <ButtonMenu nome='Matéria' Icone={() => <Book color='#fff' />} rota='materias' />
                 <ButtonMenu nome='Alunos' Icone={() => <GraduationCap color='#fff' />} rota='alunos' />
               </div>
