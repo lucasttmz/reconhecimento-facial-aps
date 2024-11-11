@@ -82,7 +82,7 @@ export function AlunosDialog({ atualizarEstado }:FilhoProps) {
                             <Checkbox
                               checked={field.value?.includes(item.id_usuario.toString())}
 
-                              onCheckedChange={(checked) => {
+                              onCheckedChange={(checked) => { //Adiciona ou remove os alunos da lista dependendo da seleção
                                 return checked
                                   ? field.onChange([...field.value, item.id_usuario.toString()])
                                   : field.onChange(

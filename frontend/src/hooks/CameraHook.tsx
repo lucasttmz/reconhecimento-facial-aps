@@ -50,10 +50,10 @@ export const CameraHook = ({ webcamRef, apiCall, onCaptureImagesR}: CameraHookPr
               fotos: arrayImagensRef.current,
             },
           });
-          console.log(data)
+          setArrayImagens([])
+
           setResponseData(data);
         } catch (error) {
-          console.log(error)
           setArrayImagens([])
           setResponseData({ error: true });
         }
@@ -67,10 +67,6 @@ export const CameraHook = ({ webcamRef, apiCall, onCaptureImagesR}: CameraHookPr
   const toggleIsAuthenticating = useCallback(() => {
     setAuthenticating(prev => !prev)
   }, [authenticating])
-
-  useEffect(() => {
-    console.log(arrayImagens);
-  }, [arrayImagens]);
 
 
   return {

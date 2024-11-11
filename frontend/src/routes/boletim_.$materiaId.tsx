@@ -21,8 +21,6 @@ function BoletimMateria() {
                 path: `/boletim/${params.materiaId}`
             })
             setMateriaInfo(response)
-
-            console.log(typeof(MateriaInfo?.faltas))
         } catch (error) {
 
         }

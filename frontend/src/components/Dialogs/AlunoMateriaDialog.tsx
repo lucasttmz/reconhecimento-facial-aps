@@ -16,7 +16,7 @@ import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { toast } from "../../hooks/use-toast"
 
-interface Iparams {
+interface IparamsAlunoMateriaD {
   postId: number,
   alunoId: number
   ataulizarNotas: (atualizar:boolean)=> void
@@ -25,7 +25,7 @@ interface Iparams {
     falta: number | undefined
   }
 }
-export function AlunoMateriaDialog({ postId, alunoId, ataulizarNotas, notaFaltaAtual }: Iparams) {
+export function AlunoMateriaDialog({ postId, alunoId, ataulizarNotas, notaFaltaAtual }: IparamsAlunoMateriaD) {
 
   const [notasFaltas, setNotasFaltas] = useState({
     faltas: notaFaltaAtual.falta,

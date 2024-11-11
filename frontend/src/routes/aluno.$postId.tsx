@@ -61,7 +61,6 @@ function Aluno() {
                 path: `alunos/${postId}`,
             }
             )
-            console.log(data)
             setAluno(data)
 
         } catch (err) {

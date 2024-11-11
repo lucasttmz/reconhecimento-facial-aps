@@ -61,7 +61,7 @@ export const InputDialog = () => {
     if (inputName == 'nome' || inputName == 'sobrenome') {
 
       let inputValue: string = e.target.value
-      inputValue = inputValue.replace(inputValue[0], inputValue[0].toUpperCase())
+      inputValue = inputValue.replace(inputValue[0], inputValue[0].toUpperCase()) // Transforma a primeira letra em maiusculo
 
       setParams({
         ...params,
@@ -86,7 +86,6 @@ export const InputDialog = () => {
 
     const data = await apiService().makeRequest(apiCall)
     if (data.status == 200) {
-      console.log(data)
       toast({
         title: `Olá ${data.data.nome}!, Esse é o seu codigo de Usuário ${data.data.codigo}`,
         description: 'Código copiado para a área de Trabalho',

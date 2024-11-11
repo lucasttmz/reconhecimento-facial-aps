@@ -33,7 +33,6 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages, codAluno }: CameraD
   const { toast } = useToast()
 
   const dataRequest = useCallback(async (codAluno: string) => {
-    console.log(codAluno)
     await getPhotos(codAluno.toLocaleUpperCase());
   }, []);
 
@@ -65,14 +64,20 @@ export const CameraDialog = ({ trigerTitle, onCaptureImages, codAluno }: CameraD
         variant: "destructive"
       })
 
-      console.log(responseData)
       return;
+    } else if (responseData?.error) {
+      toggleIsAuthenticating()
+      
+      toast({
+        title: 'erro',
+        description: 'Algo deu errado',
+        variant: "destructive"
+      })
     }
     else {
-
-      console.log(responseData)
+      toggleIsAuthenticating()
       const { data } = responseData as { data: { token: string, tipo: string, message: string } };
-
+      
       if (data.token) {
         localStorage.setItem('token', data.token);
 

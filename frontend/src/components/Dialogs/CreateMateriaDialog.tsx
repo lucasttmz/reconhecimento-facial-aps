@@ -93,7 +93,6 @@ export const CreateMateriaDialog = ({AtualizarMaterias}:ICreateMateriaDialog) =>
             })
             
             if (data.status == 200) {
-                console.log(data)
                 toast({
                   title: data.data.mensagem,
                 })
@@ -103,7 +102,6 @@ export const CreateMateriaDialog = ({AtualizarMaterias}:ICreateMateriaDialog) =>
 
         } catch (error:any) {
 
-            console.log(error)
             toast({
                 title: "Opss...",
                 description: error?.response.data.detail[0].msg,
