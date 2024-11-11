@@ -1,16 +1,22 @@
-# APS 6 Semestre (Colocar o nome do nosso site)
+# APS 6 Semestre (Sistema Escolar Biométrico)
 
 Sistema escolar que realiza a autenticação de alunos e professores através de reconhecimento facial.
 
 *Este é um repositório criado para a Atividade Prática Supervisionada (APS) do sexto semestre do curso de Ciência da Computação da UNIP.*
 
 ## Tecnologias Utilizadas
-#### Frontend (Javascript)
-- ()
+#### Frontend (Typescript)
+- React
+- TailwindCSS
+- Shadcn
+- Tanstack/Router
+- Zustand
 
 #### Backend (Python)
 - FastAPI
 - OpenCV
+- PyJWT
+- Pydantic
 
 ## 🔧 Desenvolvido por:
 
